@@ -13,6 +13,7 @@
   },
   "license": "AGPL-3.0",
   "dependencies": {
+    "jsonld": "^0.4.12",
     "yargs": "^10.0.3"
   }
 }
