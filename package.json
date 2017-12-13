@@ -7,7 +7,7 @@
     "export": "node src/main.js",
     "lint": "eslint .",
     "test": "npm run lint && mocha",
-    "watch": "npm run lint && mocha --watch"
+    "watch": "mocha --watch"
   },
   "author": {
     "name": "Center for History and New Media, George Mason University",

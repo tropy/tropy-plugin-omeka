@@ -3,6 +3,9 @@
 const { api: defaults } = require('../config.default')
 const request = require('request-promise')
 const { name: product, version } = require('../package')
+const { URL, TROPY } = require('./constants')
+const { entries } = Object
+
 
 // url should end in "/api"
 function ensureUrl(url) {
@@ -35,16 +38,34 @@ function parseProps(vocabs, props = []) {
   }, {})
 }
 
+function prepareItem(item, props) {
+  const result = {}
+  result[TROPY.ITEM] = []
+
+  for (let [propertyUri, values] of entries(item)) {
+    const propertyOmekaId = props[propertyUri]
+    if (propertyOmekaId) {
+      for (let value of values) {
+        result[TROPY.ITEM].push({
+          'type': 'literal',
+          'property_id': propertyOmekaId,
+          '@value': value['@value']
+        })
+      }
+    }
+  }
+  return result
+}
+
 class OmekaApi {
   constructor(config) {
     this.config = { ...defaults, ...config }
     this.config.url = ensureUrl(this.config.url)
   }
 
-  req(url, method) {
+  req(url, params) {
     return request({
       uri: this.config.url + url,
-      method,
       qs: {
         key_identity: this.config.key_identity,
         key_credential: this.config.key_credential
@@ -52,38 +73,38 @@ class OmekaApi {
       headers: {
         'User-Agent': `${product} ${version}`
       },
-      json: true
+      json: true,
+      ...params
     })
   }
 
   get(url) {
-    return this.req(url, 'GET')
+    return this.req(url, { method: 'GET' })
   }
 
-  // post(url) {
-  //   return this.req(url, 'POST')
-  // }
+  post(url, body) {
+    return this.req(url, { method: 'POST', body })
+  }
 
   async getProperties() {
-    try {
-      this.vocabularies = parseVocabs(await this.get('/vocabularies'))
-      this.properties = parseProps(
-        this.vocabularies, await this.get('/properties'))
-    } catch (error) {
-      console.error(`Could not connect to API: ${this.config.url}`)
-      return false
-    }
-    return true
+    const [vocabs, props] = await Promise.all([
+      this.get(URL.VOCABS),
+      this.get(URL.PROPS)
+    ])
+    this.properties = await parseProps(parseVocabs(vocabs), props)
+    console.log(this.properties)
   }
 
-  // async export(item) {
-  //   console.log(item)
-  // }
+  async export(item) {
+    const body = prepareItem(item, this.properties)
+    return await this.post(URL.ITEMS, body)
+  }
 }
 
 module.exports = {
   OmekaApi,
   ensureUrl,
   parseVocabs,
-  parseProps
+  parseProps,
+  prepareItem
 }

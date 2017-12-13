@@ -2,6 +2,7 @@
 
 const { expect } = require('chai')
 const { OmekaApi, ensureUrl } = require('../src/api')
+const { TROPY } = require('../src/constants')
 
 describe('API', () => {
   it('ensureUrl', () => {
@@ -76,6 +77,31 @@ describe('Parse', () => {
     expect(parseProps(vocabs, props)).to.eql({
       ns1short1: 1,
       ns2short2: 2
+    })
+  })
+})
+
+describe('prepareItem', () => {
+  const { prepareItem } = require('../src/api')
+
+  const item = {
+    prop1: [{
+      '@type': 'type1',
+      '@value': 'val1'
+    }]
+  }
+
+  const props = {
+    prop1: 1
+  }
+
+  it('prepares an item for sending to the API', () => {
+    expect(prepareItem(item, props)).to.eql({
+      [TROPY.ITEM]: [{
+        'type': 'literal',
+        'property_id': 1,
+        '@value': 'val1'
+      }]
     })
   })
 })
