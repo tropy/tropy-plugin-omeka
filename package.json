@@ -2,9 +2,9 @@
   "name": "tropy-omeka",
   "version": "1.0.0",
   "description": "Import Tropy items into Omeka",
-  "main": "index.js",
+  "main": "src/main.js",
   "scripts": {
-    "export": "node index.js",
+    "export": "node src/main.js",
     "test": "mocha",
     "watch": "mocha --watch"
   },

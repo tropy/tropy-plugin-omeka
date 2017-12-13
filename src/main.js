@@ -5,7 +5,7 @@ const argv = require('yargs').argv
 const { promisify } = require('util')
 const readFileAsync = promisify(fs.readFile)
 const { promises: jsonld } = require('jsonld')
-const { OmekaApi } = require('./src/api')
+const { OmekaApi } = require('./api')
 
 async function readFile(key) {
   try {
