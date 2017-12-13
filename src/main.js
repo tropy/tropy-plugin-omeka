@@ -21,7 +21,7 @@ async function readFile(key) {
 
 
 async function main() {
-  console.log('Reading arguments parameters...')
+  console.log('Reading items file...')
 
   const config = await readFile('config')
   const data = await readFile('data')
@@ -31,18 +31,17 @@ async function main() {
   console.log('Connecting to API...')
 
   const api = new OmekaApi(config.api)
-  if (!api.connectionOk) {
-    console.error(`Can not connect to API`)
+  if (!api.getProperties()) {
     return
   }
 
-  console.log('Reading items file...')
+  console.log('Exporting...')
 
   for (let grouped of expanded) {
     const { '@graph': graph } = grouped
     for (let item of graph) {
       try {
-        const response = await api.export(item)
+        // await api.export(item)
       } catch (err) {
         console.error(`Failed to export item ${item}`)
         if (!config.ignoreErrors) {
@@ -53,7 +52,6 @@ async function main() {
   }
 
 
-  console.log('Exporting...')
 }
 
 main()
