@@ -1,20 +1,25 @@
 'use strict'
 
+const { api: defaults } = require('../config.default')
+
+// url should end in "/api"
+function ensureUrl(url) {
+  // remove trailing slash
+  url = url.replace(/\/$/, '')
+
+  // if using an instance url, append 'api' to path
+  if (!url.endsWith('api')) url += '/api'
+
+  return url
+}
 
 class OmekaApi {
   constructor (config) {
-    this.url = this.ensureUrl(config.url)
-    this.key_identity = config.key_identity
-    this.key_credentials = config.key_credentials
-  }
-
-  // this.url should end in "/api"
-  ensureUrl(url) {
-    // remove trailing slash
-    url = url.replace(/\/$/, '')
-    // if using an instance url, append 'api' to path
-    if (!url.endsWith('api')) url += '/api'
-    return url
+    this.config = {
+      ...defaults,
+      ...config,
+    }
+    this.config.url = ensureUrl(this.config.url)
   }
 
   get connectionOk() {
@@ -29,5 +34,6 @@ class OmekaApi {
 }
 
 module.exports = {
-  OmekaApi
+  OmekaApi,
+  ensureUrl
 }
