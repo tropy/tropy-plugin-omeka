@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "export": "node index.js",
-    "test": "mocha --reporter dot test/*_test.js",
-    "watch": "mocha --reporter dot --watch test/*_test.js"
+    "test": "mocha",
+    "watch": "mocha --watch"
   },
   "author": {
     "name": "Center for History and New Media, George Mason University",
