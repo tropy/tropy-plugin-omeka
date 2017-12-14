@@ -5,7 +5,7 @@ const request = require('request-promise')
 const { name: product, version } = require('../package')
 const { URL, TROPY } = require('./constants')
 const { entries } = Object
-
+const { createReadStream } = require('fs')
 
 // url should end in "/api"
 function ensureUrl(url) {
@@ -71,7 +71,7 @@ class OmekaApi {
         key_credential: this.config.key_credential
       },
       headers: {
-        'User-Agent': `${product} ${version}`
+        'User-Agent': `${product} ${version}`,
       },
       json: true,
       ...params
@@ -82,8 +82,8 @@ class OmekaApi {
     return this.req(url, { method: 'GET' })
   }
 
-  post(url, body) {
-    return this.req(url, { method: 'POST', body })
+  post(url, params) {
+    return this.req(url, { method: 'POST', ...params })
   }
 
   async getProperties() {
@@ -92,12 +92,51 @@ class OmekaApi {
       this.get(URL.PROPS)
     ])
     this.properties = await parseProps(parseVocabs(vocabs), props)
-    console.log(this.properties)
+  }
+
+  addMedia(id, path) {
+    const body = {
+      'o:ingester': 'upload',
+      'file_index': 0,
+      'o:item': {
+        'o:id': id
+      }
+    }
+    return this.post(URL.MEDIA, {
+      formData: {
+        'data': JSON.stringify(body),
+        'file[]': [
+          createReadStream(path)
+        ]
+      }
+    })
   }
 
   async export(item) {
+    // create Item
+    var itemId
     const body = prepareItem(item, this.properties)
-    return await this.post(URL.ITEMS, body)
+    const createRequest = this.post(URL.ITEMS, { body })
+    try {
+      itemId = (await createRequest)['o:id']
+    } catch (e) {
+      console.log('Could not create item', e)
+      return false
+    }
+    console.log(`Item ${itemId} created`)
+
+    // create item's Photos
+    const photos = item[TROPY.PHOTO][0]['@list']
+    for (let photo of photos) {
+      const path = photo[TROPY.PATH][0]['@value']
+      try {
+        this.addMedia(itemId, path)
+      } catch (e) {
+        console.warn('Could not create photo', e)
+      }
+    }
+
+    return createRequest
   }
 }
 
