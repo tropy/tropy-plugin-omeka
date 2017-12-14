@@ -45,7 +45,8 @@ async function main() {
     for (let item of graph) {
       try {
         const result = await api.export(item)
-        console.log(`Item #${result.item} with Photos ${result.medias} created`)
+        console.log(
+          `Item #${result.item} with Photos [${result.medias}] created`)
       } catch (err) {
         console.error(`Failed to export item ${item}`, err)
         if (!config.ignoreErrors) {

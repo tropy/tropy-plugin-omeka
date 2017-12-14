@@ -94,22 +94,21 @@ class OmekaApi {
     this.properties = await parseProps(parseVocabs(vocabs), props)
   }
 
-  addMedia(id, path) {
+  mediaForm(itemId, path, metadata) {
     const data = {
       'o:ingester': 'upload',
       'file_index': 0,
       'o:item': {
-        'o:id': id
-      }
+        'o:id': itemId
+      },
+      ...metadata
     }
-    return this.post(URL.MEDIA, {
+    return {
       formData: {
         'data': JSON.stringify(data),
-        'file[]': [
-          createReadStream(path)
-        ]
+        'file[]': [createReadStream(path)]
       }
-    })
+    }
   }
 
   async createItem(item) {
@@ -131,10 +130,12 @@ class OmekaApi {
     const photos = item[TROPY.PHOTO][0]['@list']
     const medias = await Promise.all(photos.map((photo) => {
       const path = photo[TROPY.PATH][0]['@value']
+      const metadata = prepareItem(photo, this.properties)
+      let params = this.mediaForm(itemId, path, metadata)
       try {
-        return this.addMedia(itemId, path)
+        return this.post(URL.MEDIA, params)
       } catch (e) {
-        console.warn('Could not create Photo', e)
+        console.warn('Could not upload Photo', e)
       }
     }))
 
