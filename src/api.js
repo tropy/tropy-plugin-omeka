@@ -95,7 +95,7 @@ class OmekaApi {
   }
 
   addMedia(id, path) {
-    const body = {
+    const data = {
       'o:ingester': 'upload',
       'file_index': 0,
       'o:item': {
@@ -104,7 +104,7 @@ class OmekaApi {
     }
     return this.post(URL.MEDIA, {
       formData: {
-        'data': JSON.stringify(body),
+        'data': JSON.stringify(data),
         'file[]': [
           createReadStream(path)
         ]
@@ -112,31 +112,36 @@ class OmekaApi {
     })
   }
 
-  async export(item) {
-    // create Item
-    var itemId
+  async createItem(item) {
     const body = prepareItem(item, this.properties)
-    const createRequest = this.post(URL.ITEMS, { body })
     try {
-      itemId = (await createRequest)['o:id']
+      const req = await this.post(URL.ITEMS, { body })
+      return req['o:id']
     } catch (e) {
       console.log('Could not create item', e)
-      return false
     }
-    console.log(`Item ${itemId} created`)
+  }
+
+  async export(item) {
+    // create Item
+    const itemId = await this.createItem(item)
+    if (!itemId) return
 
     // create item's Photos
     const photos = item[TROPY.PHOTO][0]['@list']
-    for (let photo of photos) {
+    const medias = await Promise.all(photos.map((photo) => {
       const path = photo[TROPY.PATH][0]['@value']
       try {
-        this.addMedia(itemId, path)
+        return this.addMedia(itemId, path)
       } catch (e) {
-        console.warn('Could not create photo', e)
+        console.warn('Could not create Photo', e)
       }
-    }
+    }))
 
-    return createRequest
+    return {
+      item: itemId,
+      medias: medias.map(m => m['o:id'])
+    }
   }
 }
 
