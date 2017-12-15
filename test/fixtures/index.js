@@ -2,5 +2,6 @@
 
 module.exports = {
   properties: require('./properties'),
-  vocabularies: require('./vocabularies')
+  vocabularies: require('./vocabularies'),
+  items: require('./items')
 }

@@ -1,0 +1,65 @@
+[
+  {
+    "@context": {
+      "@vocab": "https://tropy.org/v1/tropy#",
+      "template": {
+        "@id": "https://tropy.org/v1/tropy#template",
+        "@type": "@id"
+      },
+      "photo": {
+        "@id": "https://tropy.org/v1/tropy#photo",
+        "@container": "@list",
+        "@context": {
+          "path": "http://schema.org/image",
+          "selection": {
+            "@id": "https://tropy.org/v1/tropy#selection",
+            "@container": "@list",
+            "@context": {
+              "title": {
+                "@id": "http://purl.org/dc/elements/1.1/title",
+                "@type": "http://www.w3.org/2001/XMLSchema#string"
+              }
+            }
+          },
+          "date": {
+            "@id": "http://purl.org/dc/elements/1.1/date",
+            "@type": "https://tropy.org/v1/tropy#date"
+          },
+          "title": {
+            "@id": "http://purl.org/dc/elements/1.1/title",
+            "@type": "http://www.w3.org/2001/XMLSchema#string"
+          }
+        }
+      },
+      "title": {
+        "@id": "http://purl.org/dc/terms/title",
+        "@type": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    },
+    "@graph": [
+      {
+        "@type": "Item",
+        "title": "Item Title",
+        "photo": [
+          {
+            "@type": "Photo",
+            "title": "Photo Title",
+            "date": "2017-10-26T16:47:47.000Z",
+            "path": "./package.json",
+            "selection": {
+              "@type": "Selection",
+              "title": "bouy"
+            }
+          },
+          {
+            "@type": "Photo",
+            "title": "Another Photo",
+            "date": "2017-10-26T07:26:53.000Z",
+            "path": "./package.json"
+          }
+        ]
+      }
+    ],
+    "template": "https://tropy.org/v1/templates/item"
+  }
+]
