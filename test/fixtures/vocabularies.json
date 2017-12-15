@@ -1,0 +1,12 @@
+[
+  {
+    "o:prefix": "pfx1",
+    "o:namespace_uri": "ns1",
+    "o:id": 1
+  },
+  {
+    "o:prefix": "pfx2",
+    "o:namespace_uri": "ns2",
+    "o:id": 2
+  }
+]

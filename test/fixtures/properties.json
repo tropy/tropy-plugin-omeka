@@ -1,0 +1,14 @@
+[
+  {
+    "o:id": 1,
+    "o:term": "pfx1:short1"
+  },
+  {
+    "o:id": 2,
+    "o:term": "pfx2:short2"
+  },
+  {
+    "o:id": 3,
+    "o:term": "pfxunknown:short2"
+  }
+]
