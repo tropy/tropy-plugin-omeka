@@ -2,9 +2,10 @@
   "name": "tropy-omeka",
   "version": "1.0.0",
   "description": "Import Tropy items into Omeka",
-  "main": "src/main.js",
+  "main": "src/plugin.js",
+  "bin": "scripts/main.js",
   "scripts": {
-    "export": "node src/main.js",
+    "export": "scripts/main.js",
     "lint": "eslint .",
     "test": "npm run lint && mocha",
     "watch": "mocha --watch"
