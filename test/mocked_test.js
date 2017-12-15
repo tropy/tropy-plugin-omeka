@@ -1,14 +1,10 @@
 'use strict'
 
 const { expect } = require('chai')
-const { OmekaApi } = require('../src/api')
 const nock = require('nock')
+const { OmekaApi } = require('../src/api')
 const { URL } = require('../src/constants')
-
-const fixtures = {
-  properties: require('./fixtures/properties'),
-  vocabularies: require('./fixtures/vocabularies')
-}
+const fixtures = require('./fixtures')
 
 const API_URL = 'http://mock.url/api'
 
