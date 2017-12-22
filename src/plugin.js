@@ -47,7 +47,8 @@ class Plugin {
             `Item #${result.item} with Photos [${result.medias}] created`)
           results.push(result)
         } catch (err) {
-          console.error(`Failed to export item "${title}"`, err.message)
+          console.error(`Failed to export item "${title}"`,
+                        err.message, err.stack)
           if (!this.config.ignoreErrors) {
             break
           }

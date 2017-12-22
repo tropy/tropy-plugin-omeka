@@ -155,18 +155,26 @@ class OmekaApi {
       .then(params => this.post(URL.MEDIA, params))
   }
 
-  *uploadMedia(itemId, photos) {
+  async uploadMedia(itemId, photos) {
+    let result = []
+
     for (const photo of photos) {
       const path = photo[TROPY.PATH][0]['@value']
+
       // upload the photo itself
-      yield this.uploadPicture(photo, itemId, path)
+      result.push(await this.uploadPicture(photo, itemId, path))
 
       // upload selections as separate photos
-      for (const selection of photo[TROPY.SELECTION] || []) {
-        yield this.uploadPicture(selection, itemId, path, selection)
+      const selections = photo[TROPY.SELECTION] || []
+
+      for (const selection of selections) {
+        result.push(this.uploadPicture(
+          selection, itemId, path, selection))
       }
     }
-  }
+
+    return result
+   }
 
   createItem(item) {
     const body = buildMetadata(item, this.properties)
@@ -180,8 +188,9 @@ class OmekaApi {
 
     // create item's Photos and Selections
     const photos = item[TROPY.PHOTO][0]['@list']
+
     const medias = await Promise.all(
-      this.uploadMedia(itemId, photos))
+      await this.uploadMedia(itemId, photos))
 
     return {
       item: itemId,
