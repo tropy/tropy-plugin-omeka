@@ -81,8 +81,8 @@ describe('Parse', () => {
   })
 })
 
-describe('prepareItem', () => {
-  const { prepareItem } = require('../src/api')
+describe('buildMetadata', () => {
+  const { buildMetadata } = require('../src/api')
 
   const item = {
     prop1: [{
@@ -96,7 +96,7 @@ describe('prepareItem', () => {
   }
 
   it('prepares an item for sending to the API', () => {
-    expect(prepareItem(item, props)).to.eql({
+    expect(buildMetadata(item, props)).to.eql({
       [TROPY.ITEM]: [{
         'type': 'literal',
         'property_id': 1,

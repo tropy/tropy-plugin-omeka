@@ -43,7 +43,7 @@ function parseProps(vocabs, props = []) {
   }, {})
 }
 
-function prepareItem(item, props) {
+function buildMetadata(item, props) {
   const result = {}
   result[TROPY.ITEM] = []
 
@@ -116,7 +116,7 @@ class OmekaApi {
     }
 
     // save the cropped selection to a tmp file
-    const postfix = '.jpg' // TODO
+    const postfix = path.match(/\..[^.]*$/)[0]
     const tmpFile = tmp.fileSync({ postfix })
     await sharp(path)
       .extract(coords)
@@ -148,40 +148,34 @@ class OmekaApi {
     }
   }
 
-  async createItem(item) {
-    const body = prepareItem(item, this.properties)
-    try {
-      const req = await this.post(URL.ITEMS, { body })
-      return req['o:id']
-    } catch (e) {
-      console.log('Could not create item', e)
-    }
+  // picture could be a photo or a selection
+  uploadPicture(picture, itemId, path, selection) {
+    const metadata = buildMetadata(picture, this.properties)
+    return this.mediaForm(itemId, path, metadata, selection)
+      .then(params => this.post(URL.MEDIA, params))
   }
 
   *uploadMedia(itemId, photos) {
     for (const photo of photos) {
       const path = photo[TROPY.PATH][0]['@value']
-      const metadata = prepareItem(photo, this.properties)
       // upload the photo itself
-
-      yield this.mediaForm(itemId, path, metadata)
-        .then(params => this.post(URL.MEDIA, params))
-
-      // no selections -> finished
-      if (!photo[TROPY.SELECTION]) return
+      yield this.uploadPicture(photo, itemId, path)
 
       // upload selections as separate photos
-      for (const selection of photo[TROPY.SELECTION]) {
-        let sMetadata = prepareItem(selection, this.properties)
-        yield this.mediaForm(itemId, path, sMetadata, selection)
-          .then(sParams => this.post(URL.MEDIA, sParams))
+      for (const selection of photo[TROPY.SELECTION] || []) {
+        yield this.uploadPicture(selection, itemId, path, selection)
       }
     }
   }
 
+  createItem(item) {
+    const body = buildMetadata(item, this.properties)
+    return this.post(URL.ITEMS, { body })
+  }
+
   async export(item) {
     // create Item
-    const itemId = await this.createItem(item)
+    const itemId = (await this.createItem(item))['o:id']
     if (!itemId) return
 
     // create item's Photos and Selections
@@ -201,5 +195,5 @@ module.exports = {
   ensureUrl,
   parseVocabs,
   parseProps,
-  prepareItem
+  buildMetadata
 }
