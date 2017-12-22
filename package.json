@@ -19,6 +19,8 @@
     "jsonld": "^0.4.12",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
+    "sharp": "^0.18.4",
+    "tmp": "0.0.33",
     "yargs": "^10.0.3"
   },
   "devDependencies": {

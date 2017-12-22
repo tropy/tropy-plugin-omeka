@@ -19,18 +19,14 @@ describe('Mocked requests', () => {
       .query(true)
       .reply(200, fixtures.vocabularies)
 
-      .post(URL.ITEMS)
-      .query(true)
       // created item
-      .reply(200, { 'o:id': 1 })
-      .post(URL.MEDIA)
-      .query(true)
+      .post(URL.ITEMS).query(true).reply(200, { 'o:id': 1 })
       // first photo
-      .reply(200, { 'o:id': 2 })
-      .post(URL.MEDIA)
-      .query(true)
+      .post(URL.MEDIA).query(true).reply(200, { 'o:id': 2 })
       // second photo
-      .reply(200, { 'o:id': 3 })
+      .post(URL.MEDIA).query(true).reply(200, { 'o:id': 3 })
+       // selection
+      .post(URL.MEDIA).query(true).reply(200, { 'o:id': 4 })
   })
 
   it('getProperties', async () => {
@@ -47,10 +43,9 @@ describe('Mocked requests', () => {
       { api: { url: API_URL } },
       fixtures.items
     )
-    expect(await plugin.exec()).to.eql([{
-      item: 1,
-      medias: [2, 3]
-    }])
+    const result = (await plugin.exec())[0]
+    expect(result.item).to.eql(1)
+    expect(result.medias).to.have.members([2, 3, 4])
   })
 
 })

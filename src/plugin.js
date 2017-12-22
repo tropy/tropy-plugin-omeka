@@ -2,11 +2,21 @@
 
 const { promises: jsonld } = require('jsonld')
 const { OmekaApi } = require('./api')
+const { DC } = require('./constants')
+
 
 class Plugin {
   constructor(config, data) {
     this.data = data
     this.config = config
+  }
+
+  itemTitle(item) {
+    try {
+      return item[DC.TITLE][0]['@value']
+    } catch (e) {
+      return '[untitled]'
+    }
   }
 
   async exec() {
@@ -28,13 +38,16 @@ class Plugin {
     for (let grouped of expanded) {
       const { '@graph': graph } = grouped
       for (let item of graph) {
+        const title = this.itemTitle(item)
+        console.info(`Item "${title}"...`)
+
         try {
           const result = await api.export(item)
           console.log(
             `Item #${result.item} with Photos [${result.medias}] created`)
           results.push(result)
         } catch (err) {
-          console.error(`Failed to export item ${item}`, err.message)
+          console.error(`Failed to export item "${title}"`, err.message)
           if (!this.config.ignoreErrors) {
             break
           }

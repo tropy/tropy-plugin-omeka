@@ -6,6 +6,11 @@ const { name: product, version } = require('../package')
 const { URL, TROPY } = require('./constants')
 const { entries } = Object
 const { createReadStream } = require('fs')
+const sharp = require('sharp')
+const tmp = require('tmp')
+tmp.setGracefulCleanup()
+
+
 
 // url should end in "/api"
 function ensureUrl(url) {
@@ -94,7 +99,32 @@ class OmekaApi {
     this.properties = await parseProps(parseVocabs(vocabs), props)
   }
 
-  mediaForm(itemId, path, metadata) {
+  async mediaStream(path, selection) {
+    // create a stream that is attached to the upload form
+    // (optionally cropped if given a selection)
+    const get = name => selection[`${TROPY.NS}${name}`][0]['@value']
+
+    const coords = {}
+    try {
+      coords.left = get('x')
+      coords.top = get('y')
+      coords.width = get('width')
+      coords.height = get('height')
+    } catch (e) {
+      console.error('Selection missing essential property')
+      return
+    }
+
+    // save the cropped selection to a tmp file
+    const postfix = '.jpg' // TODO
+    const tmpFile = tmp.fileSync({ postfix })
+    await sharp(path)
+      .extract(coords)
+      .toFile(tmpFile.name)
+    return createReadStream(tmpFile.name)
+  }
+
+  async mediaForm(itemId, path, metadata, selection) {
     const data = {
       'o:ingester': 'upload',
       'file_index': 0,
@@ -103,10 +133,17 @@ class OmekaApi {
       },
       ...metadata
     }
+
+    const file =
+      selection ?
+      await this.mediaStream(path, selection) :
+      createReadStream(path)
+    if (!file) return
+
     return {
       formData: {
         'data': JSON.stringify(data),
-        'file[]': [createReadStream(path)]
+        'file[]': [file]
       }
     }
   }
@@ -121,23 +158,36 @@ class OmekaApi {
     }
   }
 
+  *uploadMedia(itemId, photos) {
+    for (const photo of photos) {
+      const path = photo[TROPY.PATH][0]['@value']
+      const metadata = prepareItem(photo, this.properties)
+      // upload the photo itself
+
+      yield this.mediaForm(itemId, path, metadata)
+        .then(params => this.post(URL.MEDIA, params))
+
+      // no selections -> finished
+      if (!photo[TROPY.SELECTION]) return
+
+      // upload selections as separate photos
+      for (const selection of photo[TROPY.SELECTION]) {
+        let sMetadata = prepareItem(selection, this.properties)
+        yield this.mediaForm(itemId, path, sMetadata, selection)
+          .then(sParams => this.post(URL.MEDIA, sParams))
+      }
+    }
+  }
+
   async export(item) {
     // create Item
     const itemId = await this.createItem(item)
     if (!itemId) return
 
-    // create item's Photos
+    // create item's Photos and Selections
     const photos = item[TROPY.PHOTO][0]['@list']
-    const medias = await Promise.all(photos.map((photo) => {
-      const path = photo[TROPY.PATH][0]['@value']
-      const metadata = prepareItem(photo, this.properties)
-      let params = this.mediaForm(itemId, path, metadata)
-      try {
-        return this.post(URL.MEDIA, params)
-      } catch (e) {
-        console.warn('Could not upload Photo', e)
-      }
-    }))
+    const medias = await Promise.all(
+      this.uploadMedia(itemId, photos))
 
     return {
       item: itemId,

@@ -45,17 +45,23 @@
             "@type": "Photo",
             "title": "Photo Title",
             "date": "2017-10-26T16:47:47.000Z",
-            "path": "./package.json",
+            "path": "./test/fixtures/groundswell.jpg",
             "selection": {
               "@type": "Selection",
-              "title": "bouy"
+              "title": "bouy",
+              "angle": 0,
+              "height": 214,
+              "mirror": false,
+              "width": 141,
+              "x": 297,
+              "y": 545
             }
           },
           {
             "@type": "Photo",
             "title": "Another Photo",
             "date": "2017-10-26T07:26:53.000Z",
-            "path": "./package.json"
+            "path": "./test/fixtures/groundswell.jpg"
           }
         ]
       }
