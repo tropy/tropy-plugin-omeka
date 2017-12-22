@@ -1,15 +1,14 @@
 'use strict'
 
 const { api: defaults } = require('../config.default')
-const request = require('request-promise')
+const rp = require('request-promise')
 const { name: product, version } = require('../package')
-const { URL, TROPY } = require('./constants')
+const { URL, TROPY, OMEKA } = require('./constants')
 const { entries } = Object
 const { createReadStream } = require('fs')
 const sharp = require('sharp')
 const tmp = require('tmp')
 tmp.setGracefulCleanup()
-
 
 
 // url should end in "/api"
@@ -43,15 +42,15 @@ function parseProps(vocabs, props = []) {
   }, {})
 }
 
-function buildMetadata(item, props) {
+function buildMetadata(thing, props) {
   const result = {}
-  result[TROPY.ITEM] = []
+  result[OMEKA.WHATEVER] = []
 
-  for (let [propertyUri, values] of entries(item)) {
+  for (let [propertyUri, values] of entries(thing)) {
     const propertyOmekaId = props[propertyUri]
     if (propertyOmekaId) {
       for (let value of values) {
-        result[TROPY.ITEM].push({
+        result[OMEKA.WHATEVER].push({
           'type': 'literal',
           'property_id': propertyOmekaId,
           '@value': value['@value']
@@ -68,8 +67,8 @@ class OmekaApi {
     this.config.url = ensureUrl(this.config.url)
   }
 
-  req(url, params) {
-    return request({
+  request(url, params) {
+    return rp({
       uri: this.config.url + url,
       qs: {
         key_identity: this.config.key_identity,
@@ -84,11 +83,11 @@ class OmekaApi {
   }
 
   get(url) {
-    return this.req(url, { method: 'GET' })
+    return this.request(url, { method: 'GET' })
   }
 
   post(url, params) {
-    return this.req(url, { method: 'POST', ...params })
+    return this.request(url, { method: 'POST', ...params })
   }
 
   async getProperties() {
@@ -161,12 +160,11 @@ class OmekaApi {
     for (const photo of photos) {
       const path = photo[TROPY.PATH][0]['@value']
 
-      // upload the photo itself
+      // upload the photo itself, wait till it uploads
       result.push(await this.uploadPicture(photo, itemId, path))
 
       // upload selections as separate photos
       const selections = photo[TROPY.SELECTION] || []
-
       for (const selection of selections) {
         result.push(this.uploadPicture(
           selection, itemId, path, selection))
@@ -182,13 +180,12 @@ class OmekaApi {
   }
 
   async export(item) {
-    // create Item
+    // upload Item
     const itemId = (await this.createItem(item))['o:id']
     if (!itemId) return
 
-    // create item's Photos and Selections
+    // upload Item's Photos and Selections
     const photos = item[TROPY.PHOTO][0]['@list']
-
     const medias = await Promise.all(
       await this.uploadMedia(itemId, photos))
 

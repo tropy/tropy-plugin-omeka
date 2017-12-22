@@ -14,6 +14,7 @@
     "name": "Center for History and New Media, George Mason University",
     "url": "https://chnm.gmu.edu"
   },
+  "repository": "github:tropy/tropy-omeka",
   "license": "AGPL-3.0",
   "dependencies": {
     "jsonld": "^0.4.12",

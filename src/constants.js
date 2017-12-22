@@ -16,5 +16,10 @@ module.exports = {
   },
   DC: {
     TITLE: 'http://purl.org/dc/terms/title'
+  },
+  OMEKA: {
+    // Can be removed if
+    // https://github.com/omeka/omeka-s/issues/1171 gets resolved
+    WHATEVER: 'hello-from-tropy'
   }
 }

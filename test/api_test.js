@@ -2,7 +2,7 @@
 
 const { expect } = require('chai')
 const { OmekaApi, ensureUrl } = require('../src/api')
-const { TROPY } = require('../src/constants')
+const { OMEKA } = require('../src/constants')
 
 describe('API', () => {
   it('ensureUrl', () => {
@@ -97,7 +97,7 @@ describe('buildMetadata', () => {
 
   it('prepares an item for sending to the API', () => {
     expect(buildMetadata(item, props)).to.eql({
-      [TROPY.ITEM]: [{
+      [OMEKA.WHATEVER]: [{
         'type': 'literal',
         'property_id': 1,
         '@value': 'val1'
