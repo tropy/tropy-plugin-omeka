@@ -10,7 +10,7 @@ const { Plugin } = require('../src/plugin')
 
 
 async function readFile(key) {
-  const fileName = path.join(process.cwd(), argv[key])
+  const fileName = argv[key]
   try {
     return JSON.parse(
       await readFileAsync(fileName, { encoding: 'utf8' }))
