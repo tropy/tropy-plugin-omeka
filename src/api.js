@@ -42,29 +42,12 @@ function parseProps(vocabs, props = []) {
   }, {})
 }
 
-function buildMetadata(thing, props) {
-  const result = {}
-  result[OMEKA.WHATEVER] = []
-
-  for (let [propertyUri, values] of entries(thing)) {
-    const propertyOmekaId = props[propertyUri]
-    if (propertyOmekaId) {
-      for (let value of values) {
-        result[OMEKA.WHATEVER].push({
-          'type': 'literal',
-          'property_id': propertyOmekaId,
-          '@value': value['@value']
-        })
-      }
-    }
-  }
-  return result
-}
 
 class OmekaApi {
   constructor(config) {
     this.config = { ...defaults, ...config }
     this.config.url = ensureUrl(this.config.url)
+    this.missingProperties = []
   }
 
   request(url, params) {
@@ -147,9 +130,49 @@ class OmekaApi {
     }
   }
 
+  // keep a list of missing properties, warn the user after export.
+  addMissingProperty(property) {
+    if (property !== '@type' && !property.startsWith(TROPY.NS)) {
+      if (!this.missingProperties.includes(property)) {
+        this.missingProperties.push(property)
+      }
+    }
+  }
+
+  warnMissingProperties() {
+    if (this.missingProperties.length) {
+      console.warn('Following properties don\'t exist in Omeka' +
+                   ' and have not been exported:')
+      for (let prop of this.missingProperties) {
+        console.warn(prop)
+      }
+    }
+  }
+
+  buildMetadata(thing, props) {
+    const result = {}
+    result[OMEKA.WHATEVER] = []
+
+    for (let [propertyUri, values] of entries(thing)) {
+      const propertyOmekaId = props[propertyUri]
+      if (propertyOmekaId) {
+        for (let value of values) {
+          result[OMEKA.WHATEVER].push({
+            'type': 'literal',
+            'property_id': propertyOmekaId,
+            '@value': value['@value']
+          })
+        }
+      } else {
+        this.addMissingProperty(propertyUri)
+      }
+    }
+    return result
+  }
+
   // picture could be a photo or a selection
   uploadPicture(picture, itemId, path, selection) {
-    const metadata = buildMetadata(picture, this.properties)
+    const metadata = this.buildMetadata(picture, this.properties)
     return this.mediaForm(itemId, path, metadata, selection)
       .then(params => this.post(URL.MEDIA, params))
   }
@@ -175,7 +198,7 @@ class OmekaApi {
    }
 
   createItem(item) {
-    const body = buildMetadata(item, this.properties)
+    const body = this.buildMetadata(item, this.properties)
     return this.post(URL.ITEMS, { body })
   }
 
@@ -200,6 +223,5 @@ module.exports = {
   OmekaApi,
   ensureUrl,
   parseVocabs,
-  parseProps,
-  buildMetadata
+  parseProps
 }

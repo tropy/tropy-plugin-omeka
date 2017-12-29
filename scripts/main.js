@@ -4,7 +4,6 @@
 
 const argv = require('yargs').argv
 const Promise = require('bluebird')
-const path = require('path')
 const readFileAsync = Promise.promisify(require('fs').readFile)
 const { Plugin } = require('../src/plugin')
 

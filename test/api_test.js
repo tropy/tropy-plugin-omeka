@@ -82,10 +82,14 @@ describe('Parse', () => {
 })
 
 describe('buildMetadata', () => {
-  const { buildMetadata } = require('../src/api')
+  const api = new OmekaApi()
 
   const item = {
     prop1: [{
+      '@type': 'type1',
+      '@value': 'val1'
+    }],
+    propNone: [{
       '@type': 'type1',
       '@value': 'val1'
     }]
@@ -96,12 +100,13 @@ describe('buildMetadata', () => {
   }
 
   it('prepares an item for sending to the API', () => {
-    expect(buildMetadata(item, props)).to.eql({
+    expect(api.buildMetadata(item, props)).to.eql({
       [OMEKA.WHATEVER]: [{
         'type': 'literal',
         'property_id': 1,
         '@value': 'val1'
       }]
     })
+    expect(api.missingProperties).to.eql(['propNone'])
   })
 })

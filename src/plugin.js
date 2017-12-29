@@ -55,6 +55,9 @@ class Plugin {
         }
       }
     }
+
+    api.warnMissingProperties()
+
     return results
   }
 }
