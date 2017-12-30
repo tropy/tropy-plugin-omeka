@@ -171,6 +171,7 @@ class OmekaApi {
   // picture could be a photo or a selection
   uploadPicture(picture, itemId, path, selection) {
     const metadata = this.buildMetadata(picture, this.properties)
+    logger.debug({ photoMetadata: metadata[OMEKA.WHATEVER] })
     return this.mediaForm(itemId, path, metadata, selection)
       .then(params => this.post(URL.MEDIA, params))
   }
@@ -197,18 +198,22 @@ class OmekaApi {
 
   createItem(item) {
     const body = this.buildMetadata(item, this.properties)
+    logger.debug({ itemMetadata: body[OMEKA.WHATEVER] })
     return this.post(URL.ITEMS, { body })
   }
 
   async export(item) {
     // upload Item
-    const itemId = (await this.createItem(item))['o:id']
+    const itemResponse = await this.createItem(item)
+    logger.debug({ itemResponse })
+    const itemId = itemResponse['o:id']
     if (!itemId) return
 
     // upload Item's Photos and Selections
     const photos = item[TROPY.PHOTO][0]['@list']
     const medias = await Promise.all(
       await this.uploadMedia(itemId, photos))
+    medias.map(photoResponse => logger.debug({ photoResponse }))
 
     return {
       item: itemId,
