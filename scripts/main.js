@@ -6,6 +6,7 @@ const argv = require('yargs').argv
 const Promise = require('bluebird')
 const readFileAsync = Promise.promisify(require('fs').readFile)
 const { Plugin } = require('../src/plugin')
+const logger = require('../src/logger')
 
 
 async function readFile(key) {
@@ -14,13 +15,13 @@ async function readFile(key) {
     return JSON.parse(
       await readFileAsync(fileName, { encoding: 'utf8' }))
   } catch (error) {
-    console.error(`Argument --${key} should point to a valid json file`)
+    logger.error(`Argument --${key} should point to a valid json file`)
     process.exit()
   }
 }
 
 async function main() {
-  console.info('Reading items file...')
+  logger.info('Reading items file...')
 
   const [config, data] = await Promise.all([
     readFile('config'),

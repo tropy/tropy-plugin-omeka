@@ -3,6 +3,7 @@
 const { promises: jsonld } = require('jsonld')
 const { OmekaApi } = require('./api')
 const { DC } = require('./constants')
+const logger = require('./logger')
 
 
 class Plugin {
@@ -21,33 +22,33 @@ class Plugin {
 
   async exec() {
     const expanded = await jsonld.expand(this.data)
-    console.info('Connecting to API...')
+    logger.info('Connecting to API...')
 
     const api = new OmekaApi(this.config.api)
     try {
       await api.getProperties()
     } catch (error) {
-      console.error(
+      logger.error(
         `Could not connect to API: ${api.config.url}`, error.message)
       return
     }
 
-    console.info('Exporting...')
+    logger.info('Exporting...')
 
     const results = []
     for (let grouped of expanded) {
       const { '@graph': graph } = grouped
       for (let item of graph) {
         const title = this.itemTitle(item)
-        console.info(`Item "${title}"...`)
+        logger.info(`Item "${title}"...`)
 
         try {
           const result = await api.export(item)
-          console.log(
+          logger.info(
             `Item #${result.item} with Photos [${result.medias}] created`)
           results.push(result)
         } catch (err) {
-          console.error(`Failed to export item "${title}"`,
+          logger.error(`Failed to export item "${title}"`,
                         err.message, err.stack)
           if (!this.config.ignoreErrors) {
             break

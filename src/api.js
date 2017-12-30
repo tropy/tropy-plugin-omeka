@@ -9,7 +9,7 @@ const { createReadStream } = require('fs')
 const sharp = require('sharp')
 const tmp = require('tmp')
 tmp.setGracefulCleanup()
-
+const logger = require('./logger')
 
 // url should end in "/api"
 function ensureUrl(url) {
@@ -93,7 +93,7 @@ class OmekaApi {
       coords.width = get('width')
       coords.height = get('height')
     } catch (e) {
-      console.error('Selection missing essential property')
+      logger.error('Selection missing essential property')
       return
     }
 
@@ -141,11 +141,9 @@ class OmekaApi {
 
   warnMissingProperties() {
     if (this.missingProperties.length) {
-      console.warn('Following properties don\'t exist in Omeka' +
-                   ' and have not been exported:')
-      for (let prop of this.missingProperties) {
-        console.warn(prop)
-      }
+      logger.warn('Following properties don\'t exist in Omeka' +
+                  ' and have not been exported:')
+      logger.warn(this.missingProperties)
     }
   }
 

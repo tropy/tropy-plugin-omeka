@@ -17,6 +17,7 @@
   "repository": "github:tropy/tropy-omeka",
   "license": "AGPL-3.0",
   "dependencies": {
+    "bunyan": "^1.8.12",
     "jsonld": "^0.4.12",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
