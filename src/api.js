@@ -10,6 +10,7 @@ const sharp = require('sharp')
 const tmp = require('tmp')
 tmp.setGracefulCleanup()
 const logger = require('./logger')
+const { flatten } = require('./utils')
 
 // url should end in "/api"
 function ensureUrl(url) {
@@ -58,12 +59,13 @@ class OmekaApi {
     this.missingProperties = []
   }
 
-  request(url, params) {
+  request(url, params, qs = {}) {
     return rp({
       uri: this.config.url + url,
       qs: {
         key_identity: this.config.key_identity,
-        key_credential: this.config.key_credential
+        key_credential: this.config.key_credential,
+        ...qs
       },
       headers: {
         'User-Agent': `${product} ${version}`,
@@ -73,8 +75,8 @@ class OmekaApi {
     })
   }
 
-  get(url) {
-    return this.request(url, { method: 'GET' })
+  get(url, qs = {}) {
+    return this.request(url, { method: 'GET' }, qs)
   }
 
   post(url, params) {
@@ -82,11 +84,18 @@ class OmekaApi {
   }
 
   async getProperties() {
-    const [vocabs, props] = await Promise.all([
-      this.get(URL.VOCABS),
-      this.get(URL.PROPS)
-    ])
-    this.properties = await parseProps(parseVocabs(vocabs), props)
+    const vocabs = await this.get(URL.VOCABS)
+    const vocabsIDs = vocabs.map(v => v['o:id'])
+    const props = await Promise.all(
+      vocabsIDs.map(v => this.get(URL.PROPS, { vocabulary_id: v }), this)
+    )
+    const allProps = flatten(props)
+    logger.info(
+      `Omeka has ${allProps.length} properties` +
+      ` in ${vocabs.length} vocabularies`)
+
+    this.properties = await parseProps(parseVocabs(vocabs), allProps)
+    logger.debug({ omekaProperties: this.properties })
   }
 
   async mediaStream(path, selection) {
