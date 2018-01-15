@@ -14,9 +14,10 @@ module.exports = {
     PATH: 'https://tropy.org/v1/tropy#path',
     SELECTION: 'https://tropy.org/v1/tropy#selection',
   },
-  DC: {
-    TITLE: 'http://purl.org/dc/terms/title'
-  },
+  TITLES: [
+    'http://purl.org/dc/terms/title',
+    'http://purl.org/dc/elements/1.1/title'
+  ],
   OMEKA: {
     // Can be removed if
     // https://github.com/omeka/omeka-s/issues/1171 gets resolved

@@ -110,3 +110,27 @@ describe('buildMetadata', () => {
     expect(api.missingProperties).to.eql(['propNone'])
   })
 })
+
+describe('convert', () => {
+  const { convert } = require('../src/api')
+
+  it('empty rule list', () => {
+    expect(convert('p1')).to.eql('p1')
+    expect(convert('p1', {})).to.eql('p1')
+  })
+
+  it('no match in rule list', () => {
+    expect(convert('p1', { p2: 'foo' })).to.eql('p1')
+  })
+
+  it('have match in rule list', () => {
+    expect(convert('p1', { p1: 'foo' })).to.eql('foo')
+  })
+
+  it('match with real-world property', () => {
+    expect(convert('http://purl.org/dc/elements/1.1/title', {
+      'http://purl.org/dc/elements/1.1': 'http://purl.org/dc/terms'
+    })).to.eql('http://purl.org/dc/terms/title')
+  })
+
+})

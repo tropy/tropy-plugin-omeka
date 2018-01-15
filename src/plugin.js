@@ -2,7 +2,7 @@
 
 const { promises: jsonld } = require('jsonld')
 const { OmekaApi } = require('./api')
-const { DC } = require('./constants')
+const { TITLES } = require('./constants')
 const logger = require('./logger')
 
 
@@ -13,11 +13,12 @@ class Plugin {
   }
 
   itemTitle(item) {
-    try {
-      return item[DC.TITLE][0]['@value']
-    } catch (e) {
-      return '[untitled]'
+    for (let [key, value] of Object.entries(item)) {
+      if (TITLES.includes(key)) {
+        return value[0]['@value']
+      }
     }
+    return '[Untitled]'
   }
 
   async exec() {

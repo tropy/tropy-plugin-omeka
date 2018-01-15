@@ -42,6 +42,14 @@ function parseProps(vocabs, props = []) {
   }, {})
 }
 
+function convert(property, conversionRules = {}) {
+  for (let [key, value] of entries(conversionRules)) {
+    if (property.startsWith(key)) {
+      return property.replace(key, value)
+    }
+  }
+  return property
+}
 
 class OmekaApi {
   constructor(config) {
@@ -152,6 +160,7 @@ class OmekaApi {
     result[OMEKA.WHATEVER] = []
 
     for (let [propertyUri, values] of entries(thing)) {
+      propertyUri = convert(propertyUri, this.config.convert)
       const propertyOmekaId = props[propertyUri]
       if (propertyOmekaId) {
         for (let value of values) {
@@ -226,5 +235,6 @@ module.exports = {
   OmekaApi,
   ensureUrl,
   parseVocabs,
-  parseProps
+  parseProps,
+  convert
 }

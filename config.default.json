@@ -2,7 +2,10 @@
   "api": {
     "url": "http://<omeka_url>/api",
     "key_identity": "<your_identity>",
-    "key_credential": "<your_credential>"
+    "key_credential": "<your_credential>",
+    "convert": {
+      "http://purl.org/dc/elements/1.1": "http://purl.org/dc/terms"
+    }
   },
   "ignoreErrors": true
 }
