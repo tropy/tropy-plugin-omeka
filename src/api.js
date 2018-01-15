@@ -110,7 +110,7 @@ class OmekaApi {
       coords.width = get('width')
       coords.height = get('height')
     } catch (e) {
-      logger.error('Selection missing essential property')
+      logger.warn('Selection missing essential property', e)
       return
     }
 
@@ -206,8 +206,19 @@ class OmekaApi {
       // upload selections as separate photos
       const selections = photo[TROPY.SELECTION] || []
       for (const selection of selections) {
-        result.push(this.uploadPicture(
-          selection, itemId, path, selection))
+        // skip selections without proper dimensions
+        if (!['x', 'y', 'width', 'height']
+            .every(p => selection[`${TROPY.NS}${p}`])) {
+          logger.warn('Skipping Selection: missing dimension property')
+          continue
+        }
+        var upload
+        try {
+          upload = this.uploadPicture(selection, itemId, path, selection)
+          upload && result.push(upload)
+        } catch (e) {
+          logger.error('Could not upload selection', e)
+        }
       }
     }
 
