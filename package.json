@@ -17,18 +17,18 @@
   "repository": "github:tropy/tropy-omeka",
   "license": "AGPL-3.0",
   "dependencies": {
-    "bunyan": "^1.8.12",
     "jsonld": "^0.4.12",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
     "sharp": "^0.18.4",
     "tmp": "0.0.33",
-    "yargs": "^10.0.3"
   },
   "devDependencies": {
+    "bunyan": "^1.8.12",
     "chai": "^4.1.2",
     "eslint": "^4.13.1",
     "mocha": "^4.0.1",
-    "nock": "^9.1.4"
+    "nock": "^9.1.4",
+    "yargs": "^10.0.3"
   }
 }
