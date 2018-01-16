@@ -4,7 +4,7 @@ const { api: defaults } = require('../config.default')
 const rp = require('request-promise')
 const { name: product, version } = require('../package')
 const { URL, TROPY, OMEKA } = require('./constants')
-const { entries } = Object
+const { assign, entries } = Object
 const { createReadStream } = require('fs')
 const sharp = require('sharp')
 const tmp = require('tmp')
@@ -54,25 +54,23 @@ function convert(property, conversionRules = {}) {
 
 class OmekaApi {
   constructor(config) {
-    this.config = { ...defaults, ...config }
+    this.config = assign({}, defaults, config)
     this.config.url = ensureUrl(this.config.url)
     this.missingProperties = []
   }
 
   request(url, params, qs = {}) {
-    return rp({
+    return rp(assign({
       uri: this.config.url + url,
-      qs: {
+      qs: assign({
         key_identity: this.config.key_identity,
         key_credential: this.config.key_credential,
-        ...qs
-      },
+      }, qs),
       headers: {
         'User-Agent': `${product} ${version}`,
       },
-      json: true,
-      ...params
-    })
+      json: true
+    }), params)
   }
 
   get(url, qs = {}) {
@@ -80,7 +78,7 @@ class OmekaApi {
   }
 
   post(url, params) {
-    return this.request(url, { method: 'POST', ...params })
+    return this.request(url, assign({ method: 'POST' }, params))
   }
 
   async getProperties() {
@@ -124,14 +122,13 @@ class OmekaApi {
   }
 
   async mediaForm(itemId, path, metadata, selection) {
-    const data = {
+    const data = assign({
       'o:ingester': 'upload',
       'file_index': 0,
       'o:item': {
         'o:id': itemId
-      },
-      ...metadata
-    }
+      }
+    }, metadata)
 
     const file =
       selection ?
