@@ -9,15 +9,28 @@ const fixtures = require('./fixtures')
 
 const API_URL = 'http://mock.url/api'
 
+function authQuery(params) {
+  return Object.assign({
+    key_identity: '<your_identity>',
+    key_credential: '<your_credential>'
+  }, params)
+}
+
 describe('Mocked requests', () => {
   beforeEach(() => {
     nock(API_URL)
-      .get(URL.PROPS)
-      .query(true)
-      .reply(200, fixtures.properties)
+      // list of vocabularies
       .get(URL.VOCABS)
       .query(true)
       .reply(200, fixtures.vocabularies)
+      // properties from 1st vocabulary
+      .get(URL.PROPS)
+      .query(authQuery({ vocabulary_id: 1 }))
+      .reply(200, fixtures.properties)
+      // properties from 2nd vocabulary
+      .get(URL.PROPS)
+      .query(authQuery({ vocabulary_id: 2 }))
+      .reply(200, fixtures.properties)
 
       // created item
       .post(URL.ITEMS).query(true).reply(200, { 'o:id': 1 })

@@ -7,7 +7,7 @@
   "scripts": {
     "export": "scripts/main.js",
     "lint": "eslint .",
-    "test": "npm run lint && mocha",
+    "test": "npm run lint && electron-mocha --renderer",
     "watch": "mocha --watch"
   },
   "author": {

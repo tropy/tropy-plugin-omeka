@@ -70,7 +70,7 @@ class OmekaApi {
         'User-Agent': `${product} ${version}`,
       },
       json: true
-    }), params)
+    }, params))
   }
 
   get(url, qs = {}) {
