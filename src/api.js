@@ -1,7 +1,6 @@
 'use strict'
 
 const { api: defaults } = require('../config.default')
-const rp = require('request-promise')
 const { name: product, version } = require('../package')
 const { URL, TROPY, OMEKA } = require('./constants')
 const { assign, entries } = Object
@@ -11,6 +10,8 @@ const tmp = require('tmp')
 tmp.setGracefulCleanup()
 const logger = require('./logger')
 const { flatten } = require('./utils')
+const request = require('./http')
+
 
 // url should end in "/api"
 function ensureUrl(url) {
@@ -53,24 +54,25 @@ function convert(property, conversionRules = {}) {
 }
 
 class OmekaApi {
-  constructor(config) {
+  constructor(config, context = {}) {
     this.config = assign({}, defaults, config)
     this.config.url = ensureUrl(this.config.url)
     this.missingProperties = []
+    this.context = context
   }
 
   request(url, params, qs = {}) {
-    return rp(assign({
-      uri: this.config.url + url,
-      qs: assign({
-        key_identity: this.config.key_identity,
-        key_credential: this.config.key_credential,
-      }, qs),
-      headers: {
-        'User-Agent': `${product} ${version}`,
-      },
-      json: true
-    }, params))
+    return request(this.config.url + url,
+      assign({
+        qs: assign({
+          key_identity: this.config.key_identity,
+          key_credential: this.config.key_credential,
+        }, qs),
+        headers: {
+          'User-Agent': `${product} ${version}`,
+        },
+      }, params), this.context.fetch
+    )
   }
 
   get(url, qs = {}) {

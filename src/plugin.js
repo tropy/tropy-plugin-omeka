@@ -7,9 +7,9 @@ const logger = require('./logger')
 
 
 class Plugin {
-  constructor(config, data) {
-    this.data = data
+  constructor(config, context) {
     this.config = config
+    this.context = context
   }
 
   itemTitle(item) {
@@ -21,11 +21,11 @@ class Plugin {
     return '[Untitled]'
   }
 
-  async exec() {
-    const expanded = await jsonld.expand(this.data)
+  async exec(data) {
+    const expanded = await jsonld.expand(data)
     logger.info('Connecting to API...')
 
-    const api = new OmekaApi(this.config.api)
+    const api = new OmekaApi(this.config.api, this.context)
     try {
       await api.getProperties()
     } catch (error) {

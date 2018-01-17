@@ -8,7 +8,6 @@ const readFileAsync = Promise.promisify(require('fs').readFile)
 const { Plugin } = require('../src/plugin')
 const logger = require('../src/logger')
 
-
 async function readFile(key) {
   const fileName = argv[key]
   try {
@@ -28,8 +27,14 @@ async function main() {
     readFile('data')
   ])
 
-  const plugin = new Plugin(config, data)
-  plugin.exec()
+  // similar object will be passed to the Plugin constructor
+  // when called from Tropy
+  const context = {
+    fetch: require('node-fetch')
+  }
+
+  const plugin = new Plugin(config, context)
+  plugin.exec(data)
 }
 
 main()
