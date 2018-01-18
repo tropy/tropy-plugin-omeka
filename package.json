@@ -2,8 +2,8 @@
   "name": "tropy-omeka",
   "version": "1.0.0",
   "description": "Import Tropy items into Omeka",
-  "main": "src/plugin.js",
-  "bin": "scripts/main.js",
+  "main": "index.js",
+  "bin": "index.js",
   "scripts": {
     "export": "scripts/main.js",
     "lint": "eslint .",
@@ -25,11 +25,12 @@
     "bluebird": "^3.5.1",
     "bunyan": "^1.8.12",
     "chai": "^4.1.2",
+    "electron": "^1.7.10",
     "electron-mocha": "^5.0.0",
+    "electron-rebuild": "^1.7.3",
     "eslint": "^4.13.1",
     "fetch-mock": "^6.0.0-beta.7",
     "mocha": "^4.0.1",
-    "node-fetch": "^1.7.3",
     "yargs": "^10.0.3"
   }
 }
