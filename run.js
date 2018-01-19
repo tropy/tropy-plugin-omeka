@@ -3,7 +3,7 @@
 const { ipcRenderer: ipc } = require('electron')
 const { Plugin } = require('./src/plugin')
 
-ipc.on('ready', async (event, config, data) => {
+ipc.on('plugin-start', async (event, config, data) => {
   // Similar object will be passed to the Plugin constructor
   // when called from Tropy
   const context = {
@@ -14,8 +14,8 @@ ipc.on('ready', async (event, config, data) => {
   try {
     const plugin = new Plugin(config, context)
     await plugin.exec(data)
-    ipc.send('done')
+    ipc.send('plugin-done')
   } catch ({ message, stack }) {
-    ipc.send('error', { message, stack })
+    ipc.send('plugin-error', { message, stack })
   }
 })

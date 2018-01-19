@@ -4,7 +4,8 @@ const { api: defaults } = require('../config.default')
 const { name: product, version } = require('../package')
 const { URL, TROPY, OMEKA } = require('./constants')
 const { assign, entries } = Object
-const { createReadStream } = require('fs')
+const Promise = require('bluebird')
+const readFileAsync = Promise.promisify(require('fs').readFile)
 const sharp = require('sharp')
 const tmp = require('tmp')
 tmp.setGracefulCleanup()
@@ -62,17 +63,12 @@ class OmekaApi {
   }
 
   request(url, params, qs = {}) {
-    return request(this.config.url + url,
-      assign({
-        qs: assign({
-          key_identity: this.config.key_identity,
-          key_credential: this.config.key_credential,
-        }, qs),
-        headers: {
-          'User-Agent': `${product} ${version}`,
-        },
-      }, params), this.context.fetch
-    )
+    params.headers = params.headers || {}
+    params.headers['User-Agent'] = `${product} ${version}`
+    params.qs = params.qs || qs
+    params.qs.key_identity = this.config.key_identity
+    params.qs.key_credential = this.config.key_credential
+    return request(this.config.url + url, params, this.context.fetch)
   }
 
   get(url, qs = {}) {
@@ -98,21 +94,14 @@ class OmekaApi {
     logger.debug({ omekaProperties: this.properties })
   }
 
-  async mediaStream(path, selection) {
-    // create a stream that is attached to the upload form
-    // (optionally cropped if given a selection)
+  async selectionPath(path, selection) {
+    // create a tmp file with the selection
     const get = name => selection[`${TROPY.NS}${name}`][0]['@value']
-
     const coords = {}
-    try {
-      coords.left = get('x')
-      coords.top = get('y')
-      coords.width = get('width')
-      coords.height = get('height')
-    } catch (e) {
-      logger.warn('Selection missing essential property', e)
-      return
-    }
+    coords.left = get('x')
+    coords.top = get('y')
+    coords.width = get('width')
+    coords.height = get('height')
 
     // save the cropped selection to a tmp file
     const postfix = path.match(/\..[^.]*$/)[0]
@@ -120,7 +109,7 @@ class OmekaApi {
     await sharp(path)
       .extract(coords)
       .toFile(tmpFile.name)
-    return createReadStream(tmpFile.name)
+    return tmpFile.name
   }
 
   async mediaForm(itemId, path, metadata, selection) {
@@ -132,17 +121,19 @@ class OmekaApi {
       }
     }, metadata)
 
-    const file =
-      selection ?
-      await this.mediaStream(path, selection) :
-      createReadStream(path)
-    if (!file) return
+    if (selection) {
+      path = await this.selectionPath(path, selection)
+    }
+    if (!path) return
+
+    const buffer = await readFileAsync(path)
+
+    const form = new this.context.FormData()
+    form.append('data', JSON.stringify(data))
+    form.append('file[]', new File([buffer], selection ? 'Selection' : path))
 
     return {
-      formData: {
-        'data': JSON.stringify(data),
-        'file[]': [file]
-      }
+      body: form
     }
   }
 
@@ -227,7 +218,12 @@ class OmekaApi {
   createItem(item) {
     const body = this.buildMetadata(item, this.properties)
     logger.debug({ itemMetadata: body[OMEKA.WHATEVER] })
-    return this.post(URL.ITEMS, { body })
+    return this.post(URL.ITEMS, {
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
   }
 
   async export(item) {
@@ -241,7 +237,12 @@ class OmekaApi {
     const photos = item[TROPY.PHOTO][0]['@list']
     const medias = await Promise.all(
       await this.uploadMedia(itemId, photos))
-    medias.map(photoResponse => logger.debug({ photoResponse }))
+    medias.map(photoResponse => {
+      logger.debug({ photoResponse })
+      if (photoResponse.errors) {
+        logger.error(photoResponse.errors)
+      }
+    })
 
     return {
       item: itemId,

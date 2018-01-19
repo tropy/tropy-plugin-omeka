@@ -51,15 +51,15 @@ app.on('ready', async () => {
   ])
 
   win.webContents.once('did-finish-load', () => {
-    win.webContents.send('ready', config, data)
+    win.webContents.send('plugin-start', config, data)
   })
 
-  ipc.once('done', (event, count) => {
+  ipc.once('plugin-done', (event, count) => {
     win.webContents.once('destroyed', () => app.exit(count))
     win.close()
   })
 
-  ipc.on('error', (_, error) => fail(error))
+  ipc.on('plugin-error', (_, error) => fail(error))
 })
 
 function fail(error) {
