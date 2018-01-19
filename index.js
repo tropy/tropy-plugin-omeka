@@ -43,7 +43,7 @@ app.on('ready', async () => {
     win = null
   })
 
-  logger.info('Reading items file...')
+  logger.info('Reading config and data files...')
 
   const [config, data] = await Promise.all([
     readFile('config'),

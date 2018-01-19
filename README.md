@@ -1,20 +1,29 @@
-# Tropy -> Omeka
+# Tropy -> Omeka Plugin
+
+This is a plugin for [https://tropy.org](Tropy). It can export selected items into an [https://omeka.org/s/](Omeka S) instance.
 
 ## Setup
 
-Create an Omeka API key under `User Preferences -> API keys`
-and save them into a configuration file:
+    git clone https://github.com/tropy/tropy-omeka
+    cd tropy-omeka
+    npm install
+
+## Configuration
+
+Copy the default configuration
 
     cp config.default.json config.json
 
-Export your items from Tropy using the context menu, e.g. to `items.jsonld`.
+And populate it with your Omeka API key, found under `User Preferences -> API keys`.
 
 ## Running
 
-Ensure NodeJS 8 or later with nvm:
+Export your items from Tropy using the context menu, e.g. to `items.jsonld`. Run the exporter:
 
-    nvm use
+    npm run export -- --config /path/to/config.json --data /path/to/items.jsonld | bunyan
 
-Run the exporter:
+## Development
 
-    npm run export -- --config /path/to/config.json --data /path/to/items.jsonld
+Run the tests in electron renderer process:
+
+    npm run test

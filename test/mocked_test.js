@@ -35,7 +35,7 @@ describe('Mocked requests', () => {
   it('Plugin', async () => {
     const plugin = new Plugin(
       { api: { url: API_URL } },
-      { fetch }
+      { fetch, FormData }
     )
     const result = (await plugin.exec(fixtures.items))[0]
     expect(result.item).to.eql(1)

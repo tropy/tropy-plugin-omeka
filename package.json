@@ -5,10 +5,9 @@
   "main": "index.js",
   "bin": "index.js",
   "scripts": {
-    "export": "scripts/main.js",
+    "export": "electron .",
     "lint": "eslint .",
-    "test": "npm run lint && electron-mocha --renderer",
-    "watch": "mocha --watch"
+    "test": "npm run lint && electron-mocha --renderer"
   },
   "author": {
     "name": "Center for History and New Media, George Mason University",
