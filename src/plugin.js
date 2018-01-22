@@ -64,6 +64,4 @@ class Plugin {
   }
 }
 
-module.exports = {
-  Plugin
-}
+module.exports = Plugin

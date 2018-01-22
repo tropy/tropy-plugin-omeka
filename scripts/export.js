@@ -9,7 +9,7 @@ const path = require('path')
 const argv = require('yargs').argv
 const Promise = require('bluebird')
 const readFileAsync = Promise.promisify(require('fs').readFile)
-const logger = require('./src/logger')
+const logger = require('../src/logger')
 
 async function readFile(key) {
   const fileName = argv[key]
@@ -34,7 +34,7 @@ app.on('ready', async () => {
   }
 
   win.loadURL(url.format({
-    pathname: path.join(__dirname, './renderer/index.html'),
+    pathname: path.join(__dirname, '../renderer/index.html'),
     protocol: 'file:',
     slashes: true
   }))

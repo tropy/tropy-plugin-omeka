@@ -2,10 +2,10 @@
   "name": "tropy-omeka",
   "version": "1.0.0",
   "description": "Import Tropy items into Omeka",
-  "main": "index.js",
+  "main": "src/plugin.js",
   "bin": "index.js",
   "scripts": {
-    "export": "electron .",
+    "export": "electron scripts/export.js",
     "lint": "eslint .",
     "test": "npm run lint && electron-mocha --renderer"
   },

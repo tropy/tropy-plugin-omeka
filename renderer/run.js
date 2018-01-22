@@ -2,7 +2,7 @@
 
 require('./console')
 const { ipcRenderer: ipc } = require('electron')
-const { Plugin } = require('../src/plugin')
+const Plugin = require('../src/plugin')
 
 ipc.on('plugin-start', async (event, config, data) => {
   try {

@@ -4,7 +4,7 @@ const { expect } = require('chai')
 const fetchMock = require('fetch-mock')
 const { OmekaApi } = require('../src/api')
 const { URL } = require('../src/constants')
-const { Plugin } = require('../src/plugin')
+const Plugin = require('../src/plugin')
 const fixtures = require('./fixtures')
 
 const API_URL = 'http://mock.url/api'
