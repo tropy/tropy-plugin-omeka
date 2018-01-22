@@ -6,7 +6,8 @@ const { URL, TROPY, OMEKA } = require('./constants')
 const { assign, entries } = Object
 const Promise = require('bluebird')
 const readFileAsync = Promise.promisify(require('fs').readFile)
-const sharp = require('sharp')
+const Jimp = require('jimp')
+Jimp.prototype.writeAsync = Promise.promisify(Jimp.prototype.write)
 const tmp = require('tmp')
 tmp.setGracefulCleanup()
 const logger = require('./logger')
@@ -97,18 +98,15 @@ class OmekaApi {
   async selectionPath(path, selection) {
     // create a tmp file with the selection
     const get = name => selection[`${TROPY.NS}${name}`][0]['@value']
-    const coords = {}
-    coords.left = get('x')
-    coords.top = get('y')
-    coords.width = get('width')
-    coords.height = get('height')
+    const coords = [get('x'), get('y'), get('width'), get('height')]
 
     // save the cropped selection to a tmp file
     const postfix = path.match(/\..[^.]*$/)[0]
     const tmpFile = tmp.fileSync({ postfix })
-    await sharp(path)
-      .extract(coords)
-      .toFile(tmpFile.name)
+
+    const image = await Jimp.read(path)
+    image.crop.apply(image, coords)
+    await image.writeAsync(tmpFile.name)
     return tmpFile.name
   }
 
