@@ -10,7 +10,6 @@ const Jimp = require('jimp')
 Jimp.prototype.writeAsync = Promise.promisify(Jimp.prototype.write)
 const tmp = require('tmp')
 tmp.setGracefulCleanup()
-const logger = require('./logger')
 const { flatten } = require('./utils')
 const request = require('./http')
 
@@ -61,7 +60,7 @@ class OmekaApi {
     this.config.url = ensureUrl(this.config.url)
     this.missingProperties = []
     this.context = context
-    this.logger = this.context.logger || logger
+    this.logger = this.context.logger || require('./logger')
   }
 
   request(url, params, qs = {}) {
