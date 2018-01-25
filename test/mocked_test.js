@@ -37,7 +37,7 @@ describe('Mocked requests', () => {
       { api: { url: API_URL } },
       { fetch, FormData }
     )
-    const result = (await plugin.exec(fixtures.items))[0]
+    const result = (await plugin.export(fixtures.items))[0]
     expect(result.item).to.eql(1)
     expect(result.medias).to.have.members([2, 3, 4])
 

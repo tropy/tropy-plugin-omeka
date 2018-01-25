@@ -15,6 +15,9 @@
   },
   "repository": "github:tropy/tropy-omeka",
   "license": "AGPL-3.0",
+  "hooks": {
+    "export": "export"
+  },
   "dependencies": {
     "jimp": "^0.2.28",
     "jsonld": "^0.4.12",

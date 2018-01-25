@@ -21,7 +21,7 @@ class Plugin {
     return '[Untitled]'
   }
 
-  async exec(data) {
+  async export(data) {
     const expanded = await jsonld.expand(data)
     logger.info('Connecting to API...')
 

@@ -14,7 +14,7 @@ ipc.on('plugin-start', async (event, config, data) => {
     }
 
     const plugin = new Plugin(config, context)
-    await plugin.exec(data)
+    await plugin.export(data)
     ipc.send('plugin-done')
   } catch ({ message, stack }) {
     ipc.send('plugin-error', { message, stack })
