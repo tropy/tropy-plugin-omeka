@@ -3,6 +3,7 @@
 require('./console')
 const { ipcRenderer: ipc } = require('electron')
 const Plugin = require('../src/plugin')
+const logger = require('../src/logger')
 
 ipc.on('plugin-start', async (event, config, data) => {
   try {
@@ -10,7 +11,8 @@ ipc.on('plugin-start', async (event, config, data) => {
     // when called from Tropy
     const context = {
       fetch,
-      FormData
+      FormData,
+      logger
     }
 
     const plugin = new Plugin(config, context)

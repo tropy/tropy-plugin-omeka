@@ -61,6 +61,7 @@ class OmekaApi {
     this.config.url = ensureUrl(this.config.url)
     this.missingProperties = []
     this.context = context
+    this.logger = this.context.logger || logger
   }
 
   request(url, params, qs = {}) {
@@ -87,12 +88,12 @@ class OmekaApi {
       vocabsIDs.map(v => this.get(URL.PROPS, { vocabulary_id: v }), this)
     )
     const allProps = flatten(props)
-    logger.info(
+    this.logger.info(
       `Omeka has ${allProps.length} properties` +
       ` in ${vocabs.length} vocabularies`)
 
     this.properties = await parseProps(parseVocabs(vocabs), allProps)
-    logger.debug({ omekaProperties: this.properties })
+    this.logger.debug({ omekaProperties: this.properties })
   }
 
   async selectionPath(path, selection) {
@@ -146,9 +147,9 @@ class OmekaApi {
 
   warnMissingProperties() {
     if (this.missingProperties.length) {
-      logger.warn('Following properties don\'t exist in Omeka' +
+      this.logger.warn('Following properties don\'t exist in Omeka' +
                   ' and have not been exported:')
-      logger.warn(this.missingProperties)
+      this.logger.warn(this.missingProperties)
     }
   }
 
@@ -177,7 +178,7 @@ class OmekaApi {
   // picture could be a photo or a selection
   uploadPicture(picture, itemId, path, selection) {
     const metadata = this.buildMetadata(picture, this.properties)
-    logger.debug({ photoMetadata: metadata[OMEKA.WHATEVER] })
+    this.logger.debug({ photoMetadata: metadata[OMEKA.WHATEVER] })
     return this.mediaForm(itemId, path, metadata, selection)
       .then(params => this.post(URL.MEDIA, params))
   }
@@ -197,7 +198,7 @@ class OmekaApi {
         // skip selections without proper dimensions
         if (!['x', 'y', 'width', 'height']
             .every(p => selection[`${TROPY.NS}${p}`])) {
-          logger.warn('Skipping Selection: missing dimension property')
+          this.logger.warn('Skipping Selection: missing dimension property')
           continue
         }
         var upload
@@ -205,7 +206,7 @@ class OmekaApi {
           upload = this.uploadPicture(selection, itemId, path, selection)
           upload && result.push(upload)
         } catch (e) {
-          logger.error('Could not upload selection', e)
+          this.logger.error('Could not upload selection', e)
         }
       }
     }
@@ -215,7 +216,7 @@ class OmekaApi {
 
   createItem(item) {
     const body = this.buildMetadata(item, this.properties)
-    logger.debug({ itemMetadata: body[OMEKA.WHATEVER] })
+    this.logger.debug({ itemMetadata: body[OMEKA.WHATEVER] })
     return this.post(URL.ITEMS, {
       body: JSON.stringify(body),
       headers: {
@@ -227,7 +228,7 @@ class OmekaApi {
   async export(item) {
     // upload Item
     const itemResponse = await this.createItem(item)
-    logger.debug({ itemResponse })
+    this.logger.debug({ itemResponse })
     const itemId = itemResponse['o:id']
     if (!itemId) return
 
@@ -236,9 +237,9 @@ class OmekaApi {
     const medias = await Promise.all(
       await this.uploadMedia(itemId, photos))
     medias.map(photoResponse => {
-      logger.debug({ photoResponse })
+      this.logger.debug({ photoResponse })
       if (photoResponse.errors) {
-        logger.error(photoResponse.errors)
+        this.logger.error(photoResponse.errors)
       }
     })
 

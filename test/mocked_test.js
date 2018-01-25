@@ -6,6 +6,7 @@ const { OmekaApi } = require('../src/api')
 const { URL } = require('../src/constants')
 const Plugin = require('../src/plugin')
 const fixtures = require('./fixtures')
+const logger = require('../src/logger')
 
 const API_URL = 'http://mock.url/api'
 
@@ -35,7 +36,7 @@ describe('Mocked requests', () => {
   it('Plugin', async () => {
     const plugin = new Plugin(
       { api: { url: API_URL } },
-      { fetch, FormData }
+      { fetch, FormData, logger }
     )
     const result = (await plugin.export(fixtures.items))[0]
     expect(result.item).to.eql(1)
