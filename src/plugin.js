@@ -1,6 +1,5 @@
 'use strict'
 
-const { promises: jsonld } = require('jsonld')
 const { OmekaApi } = require('./api')
 const { TITLES } = require('./constants')
 
@@ -21,7 +20,8 @@ class Plugin {
   }
 
   async export(data) {
-    const expanded = await jsonld.expand(data)
+    const expanded = await this.context.jsonld.expand(data)
+
     this.logger.info('Connecting to API...')
 
     const api = new OmekaApi(this.config.api, this.context)

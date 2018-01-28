@@ -2,6 +2,7 @@
 
 const { expect } = require('chai')
 const fetchMock = require('fetch-mock')
+const { promises: jsonld } = require('jsonld')
 const { OmekaApi } = require('../src/api')
 const { URL } = require('../src/constants')
 const Plugin = require('../src/plugin')
@@ -22,8 +23,13 @@ fetchMock
   }))
 
 describe('Mocked requests', () => {
+  // in production, passed to Plugin from Tropy
+  const context = {
+    fetch, FormData, logger, jsonld
+  }
+
   it('getProperties', async () => {
-    const api = new OmekaApi({ url: API_URL }, { fetch })
+    const api = new OmekaApi({ url: API_URL }, context)
     await api.getProperties()
     expect(api.properties).to.eql({
       ns1short1: 1,
@@ -36,7 +42,7 @@ describe('Mocked requests', () => {
   it('Plugin', async () => {
     const plugin = new Plugin(
       { api: { url: API_URL } },
-      { fetch, FormData, logger }
+      context
     )
     const result = (await plugin.export(fixtures.items))[0]
     expect(result.item).to.eql(1)
@@ -47,5 +53,4 @@ describe('Mocked requests', () => {
     expect(fetchMock.calls(url(URL.ITEMS)).length).to.eql(1)
     expect(fetchMock.calls(url(URL.MEDIA)).length).to.eql(3)
   })
-
 })
