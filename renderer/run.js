@@ -4,6 +4,7 @@ require('./console')
 const { ipcRenderer: ipc } = require('electron')
 const Plugin = require('../src/plugin')
 const logger = require('../src/logger')
+const { promises: jsonld } = require('jsonld')
 
 ipc.on('plugin-start', async (event, config, data) => {
   try {
@@ -12,7 +13,8 @@ ipc.on('plugin-start', async (event, config, data) => {
     const context = {
       fetch,
       FormData,
-      logger
+      logger,
+      jsonld
     }
 
     const plugin = new Plugin(config, context)
