@@ -18,16 +18,12 @@
   "hooks": {
     "export": "export"
   },
-  "dependencies": {
-    "tmp": "0.0.33"
-  },
   "devDependencies": {
     "bluebird": "^3.5.1",
     "bunyan": "^1.8.12",
     "chai": "^4.1.2",
     "electron": "^1.7.10",
     "electron-mocha": "^5.0.0",
-    "electron-rebuild": "^1.7.3",
     "eslint": "^4.13.1",
     "fetch-mock": "^6.0.0-beta.7",
     "jsonld": "^0.4.12",

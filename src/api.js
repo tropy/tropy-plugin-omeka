@@ -7,9 +7,6 @@ const { URL, TROPY, OMEKA } = require('./constants')
 const { assign, entries } = Object
 const Promise = require('bluebird')
 const readFileAsync = Promise.promisify(require('fs').readFile)
-const writeFileAsync = Promise.promisify(require('fs').writeFile)
-const tmp = require('tmp')
-tmp.setGracefulCleanup()
 const { flatten } = require('./utils')
 const request = require('./http')
 
@@ -95,8 +92,8 @@ class OmekaApi {
     this.logger.debug({ omekaProperties: this.properties })
   }
 
-  async selectionPath(path, selection) {
-    // create a tmp file with the selection
+  async selectionImage(path, selection) {
+    // create a buffer with the selection
     const get = name => selection[`${TROPY.NS}${name}`][0]['@value']
     const coords = {
       x: get('x'),
@@ -105,14 +102,10 @@ class OmekaApi {
       height: get('height'),
     }
 
-    // save the cropped selection to a tmp file
-    const postfix = path.match(/\..[^.]*$/)[0]
-    const tmpFile = tmp.fileSync({ postfix })
-
-    const image = nativeImage.createFromPath(path)
-    const cropped = image.crop(coords)
-    await writeFileAsync(tmpFile.name, cropped.toJPEG(100))
-    return tmpFile.name
+    return nativeImage
+      .createFromPath(path)
+      .crop(coords)
+      .toJPEG(100)
   }
 
   async mediaForm(itemId, path, metadata, selection) {
@@ -124,16 +117,14 @@ class OmekaApi {
       }
     }, metadata)
 
-    if (selection) {
-      path = await this.selectionPath(path, selection)
-    }
-    if (!path) return
-
-    const buffer = await readFileAsync(path)
+    const buffer = selection ?
+      this.selectionImage(path, selection) :
+      readFileAsync(path)
 
     const form = new this.context.FormData()
     form.append('data', JSON.stringify(data))
-    form.append('file[]', new File([buffer], selection ? 'Selection' : path))
+    form.append('file[]', new File([await buffer],
+                                   selection ? 'Selection' : path))
 
     return {
       body: form
