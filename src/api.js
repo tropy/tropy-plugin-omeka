@@ -1,13 +1,13 @@
 'use strict'
 
+const { nativeImage } = require('electron')
 const { api: defaults } = require('../config.default')
 const { name: product, version } = require('../package')
 const { URL, TROPY, OMEKA } = require('./constants')
 const { assign, entries } = Object
 const Promise = require('bluebird')
 const readFileAsync = Promise.promisify(require('fs').readFile)
-const Jimp = require('jimp')
-Jimp.prototype.writeAsync = Promise.promisify(Jimp.prototype.write)
+const writeFileAsync = Promise.promisify(require('fs').writeFile)
 const tmp = require('tmp')
 tmp.setGracefulCleanup()
 const { flatten } = require('./utils')
@@ -98,15 +98,20 @@ class OmekaApi {
   async selectionPath(path, selection) {
     // create a tmp file with the selection
     const get = name => selection[`${TROPY.NS}${name}`][0]['@value']
-    const coords = [get('x'), get('y'), get('width'), get('height')]
+    const coords = {
+      x: get('x'),
+      y: get('y'),
+      width: get('width'),
+      height: get('height'),
+    }
 
     // save the cropped selection to a tmp file
     const postfix = path.match(/\..[^.]*$/)[0]
     const tmpFile = tmp.fileSync({ postfix })
 
-    const image = await Jimp.read(path)
-    image.crop.apply(image, coords)
-    await image.writeAsync(tmpFile.name)
+    const image = nativeImage.createFromPath(path)
+    const cropped = image.crop(coords)
+    await writeFileAsync(tmpFile.name, cropped.toJPEG(100))
     return tmpFile.name
   }
 
