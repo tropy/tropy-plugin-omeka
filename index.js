@@ -1,7 +1,7 @@
 'use strict'
 
-const { OmekaApi } = require('./api')
-const { TITLES } = require('./constants')
+const { OmekaApi } = require('./src/api')
+const { TITLES } = require('./src/constants')
 
 class Plugin {
   constructor(config, context) {

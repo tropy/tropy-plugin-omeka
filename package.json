@@ -2,8 +2,7 @@
   "name": "tropy-omeka",
   "version": "1.0.0",
   "description": "Import Tropy items into Omeka",
-  "main": "src/plugin.js",
-  "bin": "index.js",
+  "main": "index.js",
   "scripts": {
     "export": "electron scripts/export.js",
     "lint": "eslint .",

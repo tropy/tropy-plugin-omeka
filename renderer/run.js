@@ -2,7 +2,7 @@
 
 require('./console')
 const { ipcRenderer: ipc } = require('electron')
-const Plugin = require('../src/plugin')
+const Plugin = require('..')
 const logger = require('../src/logger')
 const { promises: jsonld } = require('jsonld')
 

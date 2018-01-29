@@ -5,7 +5,7 @@ const fetchMock = require('fetch-mock')
 const { promises: jsonld } = require('jsonld')
 const { OmekaApi } = require('../src/api')
 const { URL } = require('../src/constants')
-const Plugin = require('../src/plugin')
+const Plugin = require('..')
 const fixtures = require('./fixtures')
 const logger = require('../src/logger')
 
