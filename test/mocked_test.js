@@ -1,5 +1,6 @@
 'use strict'
 
+const { nativeImage } = require('electron')
 const { expect } = require('chai')
 const fetchMock = require('fetch-mock')
 const { promises: jsonld } = require('jsonld')
@@ -25,7 +26,7 @@ fetchMock
 describe('Mocked requests', () => {
   // in production, passed to Plugin from Tropy
   const context = {
-    fetch, FormData, logger, jsonld
+    fetch, FormData, logger, jsonld, nativeImage
   }
 
   it('getProperties', async () => {

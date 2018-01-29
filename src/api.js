@@ -1,6 +1,5 @@
 'use strict'
 
-const { nativeImage } = require('electron')
 const { api: defaults } = require('../config.default')
 const { name: product, version } = require('../package')
 const { URL, TROPY, OMEKA } = require('./constants')
@@ -102,7 +101,7 @@ class OmekaApi {
       height: get('height'),
     }
 
-    return nativeImage
+    return this.context.nativeImage
       .createFromPath(path)
       .crop(coords)
       .toJPEG(100)

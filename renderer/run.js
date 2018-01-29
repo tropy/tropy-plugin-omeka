@@ -1,7 +1,7 @@
 'use strict'
 
 require('./console')
-const { ipcRenderer: ipc } = require('electron')
+const { ipcRenderer: ipc, nativeImage } = require('electron')
 const Plugin = require('..')
 const logger = require('../src/logger')
 const { promises: jsonld } = require('jsonld')
@@ -14,7 +14,8 @@ ipc.on('plugin-start', async (event, config, data) => {
       fetch,
       FormData,
       logger,
-      jsonld
+      jsonld,
+      nativeImage
     }
 
     const plugin = new Plugin(config, context)
