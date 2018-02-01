@@ -65,7 +65,7 @@ class OmekaApi {
     params.qs = params.qs || qs
     params.qs.key_identity = this.config.key_identity
     params.qs.key_credential = this.config.key_credential
-    return request(this.config.url + url, params, this.context.fetch)
+    return request(this.config.url + url, params)
   }
 
   get(url, qs = {}) {
@@ -120,7 +120,7 @@ class OmekaApi {
       this.selectionImage(path, selection) :
       readFileAsync(path)
 
-    const form = new this.context.FormData()
+    const form = new FormData()
     form.append('data', JSON.stringify(data))
     form.append('file[]', new File([await buffer],
                                    selection ? 'Selection' : path))

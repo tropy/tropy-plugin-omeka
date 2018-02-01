@@ -11,8 +11,6 @@ ipc.on('plugin-start', async (event, config, data) => {
     // Similar object will be passed to the Plugin constructor
     // when called from Tropy
     const context = {
-      fetch,
-      FormData,
       logger,
       jsonld,
       nativeImage

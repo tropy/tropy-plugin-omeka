@@ -10,7 +10,7 @@ function addQueryString(url, qs = {}) {
   return url
 }
 
-module.exports = async function (url, params, fetch) {
+module.exports = async function (url, params) {
   url = addQueryString(url, params.qs)
   delete params.qs
 

@@ -26,7 +26,7 @@ fetchMock
 describe('Mocked requests', () => {
   // in production, passed to Plugin from Tropy
   const context = {
-    fetch, FormData, logger, jsonld, nativeImage
+    logger, jsonld, nativeImage
   }
 
   it('getProperties', async () => {
