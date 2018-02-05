@@ -2,6 +2,7 @@
 
 const { OmekaApi } = require('./src/api')
 const { TITLES } = require('./src/constants')
+const { promises: jsonld } = require('jsonld')
 
 class Plugin {
   constructor(config, context) {
@@ -20,7 +21,7 @@ class Plugin {
   }
 
   async export(data) {
-    const expanded = await this.context.jsonld.expand(data)
+    const expanded = await jsonld.expand(data)
 
     this.logger.info('Connecting to API...')
 

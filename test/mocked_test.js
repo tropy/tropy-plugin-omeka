@@ -1,9 +1,7 @@
 'use strict'
 
-const { nativeImage } = require('electron')
 const { expect } = require('chai')
 const fetchMock = require('fetch-mock')
-const { promises: jsonld } = require('jsonld')
 const { OmekaApi } = require('../src/api')
 const { URL } = require('../src/constants')
 const Plugin = require('..')
@@ -26,7 +24,7 @@ fetchMock
 describe('Mocked requests', () => {
   // in production, passed to Plugin from Tropy
   const context = {
-    logger, jsonld, nativeImage
+    logger
   }
 
   it('getProperties', async () => {

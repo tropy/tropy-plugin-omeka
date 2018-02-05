@@ -8,6 +8,7 @@ const Promise = require('bluebird')
 const readFileAsync = Promise.promisify(require('fs').readFile)
 const { flatten } = require('./utils')
 const request = require('./http')
+const { nativeImage } = require('electron')
 
 
 // url should end in "/api"
@@ -101,7 +102,7 @@ class OmekaApi {
       height: get('height'),
     }
 
-    return this.context.nativeImage
+    return nativeImage
       .createFromPath(path)
       .crop(coords)
       .toJPEG(100)
