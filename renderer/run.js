@@ -10,7 +10,8 @@ ipc.on('plugin-start', async (event, config, data) => {
     // Similar object will be passed to the Plugin constructor
     // when called from Tropy
     const context = {
-      logger
+      logger,
+      require
     }
 
     const plugin = new Plugin(config, context)

@@ -24,7 +24,8 @@ fetchMock
 describe('Mocked requests', () => {
   // in production, passed to Plugin from Tropy
   const context = {
-    logger
+    logger,
+    require
   }
 
   it('getProperties', async () => {

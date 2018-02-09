@@ -4,12 +4,9 @@ const { api: defaults } = require('../config.default')
 const { name: product, version } = require('../package')
 const { URL, TROPY, OMEKA } = require('./constants')
 const { assign, entries } = Object
-const Promise = require('bluebird')
-const readFileAsync = Promise.promisify(require('fs').readFile)
 const { flatten } = require('./utils')
 const request = require('./http')
 const { nativeImage } = require('electron')
-
 
 // url should end in "/api"
 function ensureUrl(url) {
@@ -58,6 +55,12 @@ class OmekaApi {
     this.missingProperties = []
     this.context = context
     this.logger = this.context.logger || require('./logger')
+
+    if (context && context.require) {
+      this.Promise = this.context.require('bluebird')
+      this.readFile = this.Promise.promisify(
+        this.context.require('fs').readFile)
+    }
   }
 
   request(url, params, qs = {}) {
@@ -80,7 +83,7 @@ class OmekaApi {
   async getProperties() {
     const vocabs = await this.get(URL.VOCABS)
     const vocabsIDs = vocabs.map(v => v['o:id'])
-    const props = await Promise.all(
+    const props = await this.Promise.all(
       vocabsIDs.map(v => this.get(URL.PROPS, { vocabulary_id: v }), this)
     )
     const allProps = flatten(props)
@@ -119,7 +122,7 @@ class OmekaApi {
 
     const buffer = selection ?
       this.selectionImage(path, selection) :
-      readFileAsync(path)
+      this.readFile(path)
 
     const form = new FormData()
     form.append('data', JSON.stringify(data))
@@ -229,7 +232,7 @@ class OmekaApi {
 
     // upload Item's Photos and Selections
     const photos = item[TROPY.PHOTO][0]['@list']
-    const medias = await Promise.all(
+    const medias = await this.Promise.all(
       await this.uploadMedia(itemId, photos))
     medias.map(photoResponse => {
       this.logger.debug({ photoResponse })
