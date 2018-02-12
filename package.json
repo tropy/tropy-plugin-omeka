@@ -1,6 +1,6 @@
 {
   "name": "tropy-omeka",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Import Tropy items into Omeka",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,7 @@
   "repository": "github:tropy/tropy-omeka",
   "license": "AGPL-3.0",
   "hooks": {
-    "export": "export"
+    "export": true
   },
   "devDependencies": {
     "bluebird": "^3.5.1",

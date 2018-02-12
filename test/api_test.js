@@ -14,6 +14,9 @@ describe('API', () => {
   it('no config passed', () => {
     const api = new OmekaApi()
     expect(api.config.url).to.eql('http://<omeka_url>/api')
+    expect(api.config.convert).to.eql({
+      'http://purl.org/dc/elements/1.1': 'http://purl.org/dc/terms'
+    })
   })
 
   it('empty config passed', () => {

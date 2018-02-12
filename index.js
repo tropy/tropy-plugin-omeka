@@ -3,10 +3,14 @@
 const { OmekaApi } = require('./src/api')
 const { TITLES } = require('./src/constants')
 
+const configDefaults = {
+  ignoreErrors: true
+}
+
 class Plugin {
   constructor(config, context) {
-    this.config = config
-    this.context = context
+    this.config = Object.assign(configDefaults, config)
+    this.context = context || {}
     this.logger = this.context.logger
   }
 
