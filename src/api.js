@@ -48,6 +48,11 @@ function convert(property, conversionRules = {}) {
   return property
 }
 
+const getList = (obj) => {
+  const list = obj && obj.length && obj[0]['@list']
+  return (list && list.length) ? list : []
+}
+
 class OmekaApi {
   constructor(config, context = {}) {
     this.config = assign({}, defaults, config)
@@ -191,7 +196,7 @@ class OmekaApi {
       result.push(await this.uploadPicture(photo, itemId, path))
 
       // upload selections as separate photos
-      const selections = photo[TROPY.SELECTION] || []
+      const selections = getList(photo[TROPY.SELECTION])
       for (const selection of selections) {
         // skip selections without proper dimensions
         if (!['x', 'y', 'width', 'height']
