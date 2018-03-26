@@ -17,6 +17,22 @@
   "hooks": {
     "export": true
   },
+  "options": [
+    {
+      "field": "api.url",
+      "default": "http://<omeka_url>/api",
+      "hint": "The URL to your Omeka S server",
+      "label": "API URL"
+    },
+    {
+      "field": "api.key_identity",
+      "label": "Identity Key"
+    },
+    {
+      "field": "api.key_credential",
+      "label": "Credential Key"
+    }
+  ],
   "devDependencies": {
     "bluebird": "^3.5.1",
     "bunyan": "^1.8.12",
