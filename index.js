@@ -9,7 +9,7 @@ const configDefaults = {
 
 class Plugin {
   constructor(config, context) {
-    this.config = Object.assign(configDefaults, config)
+    this.config = Object.assign({}, configDefaults, config)
     this.context = context || {}
     this.logger = this.context.logger
   }
