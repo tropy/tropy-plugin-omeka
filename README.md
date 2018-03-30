@@ -1,6 +1,6 @@
 # Tropy -> Omeka Plugin
 
-This is a plugin for [https://tropy.org](Tropy). It can export selected items into an [https://omeka.org/s/](Omeka S) instance.
+This is a plugin for [Tropy](https://tropy.org). It can export selected items into an [Omeka S](https://omeka.org/s/) instance.
 
 ## Setup
 
