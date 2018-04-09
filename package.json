@@ -1,7 +1,7 @@
 {
   "name": "tropy-omeka",
   "version": "1.0.4",
-  "description": "Import Tropy items into Omeka",
+  "description": "Export Tropy items to Omeka S.",
   "main": "index.js",
   "scripts": {
     "export": "electron scripts/export.js",
