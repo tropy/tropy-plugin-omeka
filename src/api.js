@@ -2,9 +2,8 @@
 
 const { api: defaults } = require('../config.default')
 const { name: product, version } = require('../package')
-const { URL, TROPY, OMEKA } = require('./constants')
+const { API, URL, TROPY, OMEKA } = require('./constants')
 const { assign, entries } = Object
-const { flatten } = require('./utils')
 const request = require('./http')
 const { nativeImage } = require('electron')
 
@@ -85,19 +84,26 @@ class OmekaApi {
     return this.request(url, assign({ method: 'POST' }, params))
   }
 
+  async getPropsList(pageNo = 1) {
+    const results = await this.get(
+      URL.PROPS, { per_page: API.PER_PAGE, page: pageNo }
+    )
+    if (results.length === API.PER_PAGE && pageNo < API.MAX_PAGES) {
+      return results.concat(await this.getPropsList(pageNo + 1))
+    } else {
+      return results
+    }
+  }
+
   async getProperties() {
     const vocabs = await this.get(URL.VOCABS)
-    const vocabsIDs = vocabs.map(v => v['o:id'])
-    const props = await this.Promise.all(
-      vocabsIDs.map(v => this.get(URL.PROPS, { vocabulary_id: v }), this)
-    )
-    const allProps = flatten(props)
+    const entireList = await this.getPropsList()
+    this.properties = await parseProps(parseVocabs(vocabs), entireList)
     this.logger.info(
-      `Omeka has ${allProps.length} properties` +
+      `Omeka has ${this.properties.length} properties` +
       ` in ${vocabs.length} vocabularies`)
-
-    this.properties = await parseProps(parseVocabs(vocabs), allProps)
     this.logger.debug({ omekaProperties: this.properties })
+
   }
 
   async selectionImage(path, selection) {
@@ -173,6 +179,11 @@ class OmekaApi {
         }
       } else {
         this.addMissingProperty(propertyUri)
+      }
+    }
+    if (this.config.resource_template) {
+      result['o:resource_template'] = {
+        'o:id': this.config.resource_template
       }
     }
     return result

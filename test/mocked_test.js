@@ -21,7 +21,7 @@ fetchMock
     'o:id': uploadCount++
   }))
 
-describe('Mocked requests', () => {
+describe.only('Mocked requests', () => {
   // in production, passed to Plugin from Tropy
   const context = {
     logger,
@@ -36,10 +36,13 @@ describe('Mocked requests', () => {
       ns2short2: 2
     })
 
-    expect(fetchMock.calls().length).to.eql(3)
+    expect(fetchMock.calls().length).to.eql(2)
+    expect(fetchMock.calls(url(URL.VOCABS)).length).to.eql(1)
+    expect(fetchMock.calls(url(URL.PROPS)).length).to.eql(1)
   })
 
   it('Plugin', async () => {
+    fetchMock.reset()
     const plugin = new Plugin(
       { api: { url: API_URL } },
       context
@@ -48,8 +51,8 @@ describe('Mocked requests', () => {
     expect(result.item).to.eql(1)
     expect(result.medias).to.have.members([2, 3, 4])
 
-    expect(fetchMock.calls(url(URL.VOCABS)).length).to.eql(2)
-    expect(fetchMock.calls(url(URL.PROPS)).length).to.eql(4)
+    expect(fetchMock.calls(url(URL.VOCABS)).length).to.eql(1)
+    expect(fetchMock.calls(url(URL.PROPS)).length).to.eql(1)
     expect(fetchMock.calls(url(URL.ITEMS)).length).to.eql(1)
     expect(fetchMock.calls(url(URL.MEDIA)).length).to.eql(3)
   })

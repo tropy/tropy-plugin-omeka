@@ -31,6 +31,10 @@
     {
       "field": "api.key_credential",
       "label": "Credential Key"
+    },
+    {
+      "field": "api.resource_template",
+      "label": "Resource template ID"
     }
   ],
   "devDependencies": {

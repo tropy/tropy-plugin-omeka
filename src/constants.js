@@ -22,5 +22,9 @@ module.exports = {
     // Can be removed if
     // https://github.com/omeka/omeka-s/issues/1171 gets resolved
     WHATEVER: 'hello-from-tropy'
+  },
+  API: {
+    PER_PAGE: 100,
+    MAX_PAGES: 100
   }
 }
