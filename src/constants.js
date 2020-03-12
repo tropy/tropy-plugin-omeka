@@ -13,6 +13,8 @@ module.exports = {
     ITEM: 'https://tropy.org/v1/tropy#Item',
     PATH: 'https://tropy.org/v1/tropy#path',
     SELECTION: 'https://tropy.org/v1/tropy#selection',
+    NOTE: 'https://tropy.org/v1/tropy#note',
+    HTML: 'https://tropy.org/v1/tropy#html'
   },
   TITLES: [
     'http://purl.org/dc/terms/title',
