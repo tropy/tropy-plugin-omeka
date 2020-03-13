@@ -195,21 +195,24 @@ class OmekaApi {
     item[TROPY.PHOTO][0]['@list'].map(photo => {
 
       //photos notes
-      photo[TROPY.NOTE][0]['@list'].map(note => {
-        notes.push({
-          title: item[TROPY.PHOTO][0]['@list'][0][TITLES[1]][0]['@value'],
-          html: note[TROPY.HTML][0]['@value']
-        } )
-      })
-
-      //selections notes
-      photo[TROPY.SELECTION][0]['@list'].map(selection => {
-          selection[TROPY.NOTE][0]['@list'].map(note => {
+      if( photo[TROPY.NOTE] ){
+        photo[TROPY.NOTE][0]['@list'].map(note => {
           notes.push({
             html: note[TROPY.HTML][0]['@value']
           } )
         })
-      })
+      }
+
+      //selections notes
+      if( photo[TROPY.SELECTION] ){
+        photo[TROPY.SELECTION][0]['@list'].map(selection => {
+            selection[TROPY.NOTE][0]['@list'].map(note => {
+            notes.push({
+              html: note[TROPY.HTML][0]['@value']
+            } )
+          })
+        })
+      }
     })
 
     return notes
@@ -224,32 +227,33 @@ class OmekaApi {
   }
 
   async uploadNotes(itemId, notes) {
-    var html = notes.map(e => e.html).join('<hr/>')
+    if(notes.length > 0){
+      var html = notes.map(e => e.html).join('<hr/>')
 
-    const form = {
-      'o:renderer': 'html',
-      'o:is_public': true,
-      '@type': 'cnt:ContentAsText',
-      'cnt:characterEncoding': 'UTF-8',
-      'o:ingester': 'html',
-      'o:item': { 'o:id': itemId },
-      'data': { html: html },
-      'dcterms:title': [
-        {
-          'property_id': 1,
-          '@value': 'Notes',
-          'type': 'literal',
-          'property_label': 'Title'
-        }
-      ]
+      const form = {
+        'o:renderer': 'html',
+        'o:is_public': true,
+        '@type': 'cnt:ContentAsText',
+        'cnt:characterEncoding': 'UTF-8',
+        'o:ingester': 'html',
+        'o:item': { 'o:id': itemId },
+        'data': { html: html },
+        'dcterms:title': [
+          {
+            'property_id': 1,
+            '@value': 'Notes',
+            'type': 'literal',
+            'property_label': 'Title'
+          }
+        ]
+      }
+
+      const params = {
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      }
+      return this.post(URL.MEDIA, params)
     }
-
-    const params = {
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
-    }
-
-    return this.post(URL.MEDIA, params)
   }
 
   async uploadMedia(itemId, photos) {
@@ -306,8 +310,7 @@ class OmekaApi {
     const medias = await this.Promise.all(
       await this.uploadMedia(itemId, photos))
 
-    const notes = this.getNotes(item)
-    await this.Promise( this.uploadNotes(itemId, notes))
+    await this.Promise( this.uploadNotes(itemId, this.getNotes(item)) )
 
     medias.map(photoResponse => {
       this.logger.debug({ photoResponse })
