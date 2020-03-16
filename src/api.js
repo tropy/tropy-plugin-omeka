@@ -2,7 +2,7 @@
 
 const { api: defaults } = require('../config.default')
 const { name: product, version } = require('../package')
-const { API, URL, TROPY, TITLES, OMEKA } = require('./constants')
+const { API, URL, TROPY, OMEKA } = require('./constants')
 const { assign, entries } = Object
 const request = require('./http')
 const { nativeImage } = require('electron')
@@ -191,26 +191,22 @@ class OmekaApi {
 
   getNotes(item) {
     var notes = []
-
     item[TROPY.PHOTO][0]['@list'].map(photo => {
-
       //photos notes
-      if( photo[TROPY.NOTE] ){
+      if ( photo[TROPY.NOTE] ) {
         photo[TROPY.NOTE][0]['@list'].map(note => {
-          notes.push({
-            html: note[TROPY.HTML][0]['@value']
-          } )
+          notes.push({ html: note[TROPY.HTML][0]['@value'] })
         })
       }
 
       //selections notes
-      if( photo[TROPY.SELECTION] ){
+      if ( photo[TROPY.SELECTION] ) {
         photo[TROPY.SELECTION][0]['@list'].map(selection => {
-            selection[TROPY.NOTE][0]['@list'].map(note => {
-            notes.push({
-              html: note[TROPY.HTML][0]['@value']
-            } )
-          })
+            if ( selection[TROPY.NOTE] ) {
+              selection[TROPY.NOTE][0]['@list'].map(note => {
+                notes.push({ html: note[TROPY.HTML][0]['@value'] })
+              })
+            }
         })
       }
     })
@@ -227,7 +223,7 @@ class OmekaApi {
   }
 
   async uploadNotes(itemId, notes) {
-    if(notes.length > 0){
+    if (notes.length > 0) {
       var html = notes.map(e => e.html).join('<hr/>')
 
       const form = {
