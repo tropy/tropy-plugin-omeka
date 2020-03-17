@@ -189,12 +189,67 @@ class OmekaApi {
     return result
   }
 
+  getNotes(item) {
+    var notes = []
+    item[TROPY.PHOTO][0]['@list'].map(photo => {
+      //photos notes
+      if ( photo[TROPY.NOTE] ) {
+        photo[TROPY.NOTE][0]['@list'].map(note => {
+          notes.push({ html: note[TROPY.HTML][0]['@value'] })
+        })
+      }
+
+      //selections notes
+      if ( photo[TROPY.SELECTION] ) {
+        photo[TROPY.SELECTION][0]['@list'].map(selection => {
+            if ( selection[TROPY.NOTE] ) {
+              selection[TROPY.NOTE][0]['@list'].map(note => {
+                notes.push({ html: note[TROPY.HTML][0]['@value'] })
+              })
+            }
+        })
+      }
+    })
+
+    return notes
+  }
+
   // picture could be a photo or a selection
   uploadPicture(picture, itemId, path, selection) {
     const metadata = this.buildMetadata(picture, this.properties)
     this.logger.debug({ photoMetadata: metadata[OMEKA.WHATEVER] })
     return this.mediaForm(itemId, path, metadata, selection)
       .then(params => this.post(URL.MEDIA, params))
+  }
+
+  async uploadNotes(itemId, notes) {
+    if (notes.length > 0) {
+      var html = notes.map(e => e.html).join('<hr/>')
+
+      const form = {
+        'o:renderer': 'html',
+        'o:is_public': true,
+        '@type': 'cnt:ContentAsText',
+        'cnt:characterEncoding': 'UTF-8',
+        'o:ingester': 'html',
+        'o:item': { 'o:id': itemId },
+        'data': { html: html },
+        'dcterms:title': [
+          {
+            'property_id': 1,
+            '@value': 'Notes',
+            'type': 'literal',
+            'property_label': 'Title'
+          }
+        ]
+      }
+
+      const params = {
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      }
+      return this.post(URL.MEDIA, params)
+    }
   }
 
   async uploadMedia(itemId, photos) {
@@ -250,6 +305,9 @@ class OmekaApi {
     const photos = item[TROPY.PHOTO][0]['@list']
     const medias = await this.Promise.all(
       await this.uploadMedia(itemId, photos))
+
+    await this.Promise( this.uploadNotes(itemId, this.getNotes(item)) )
+
     medias.map(photoResponse => {
       this.logger.debug({ photoResponse })
       if (photoResponse.errors) {
