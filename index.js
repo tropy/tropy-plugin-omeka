@@ -24,16 +24,17 @@ class Plugin {
   }
 
   async export(data) {
-    const expanded = await this.context.require('jsonld').promises.expand(data)
+    const expanded = await this.context.json.expand(data)
 
     this.logger.info('Connecting to API...')
 
     const api = new OmekaApi(this.config.api, this.context)
     try {
       await api.getProperties()
-    } catch (error) {
-      this.logger.error(
-        `Could not connect to API: ${api.config.url}`, error.message)
+    } catch (e) {
+      this.logger.error({
+        stack: e.stack
+      }, `Could not connect to API: ${api.config.url}`)
       return
     }
 
@@ -51,9 +52,10 @@ class Plugin {
           this.logger.info(
             `Item #${result.item} with Photos [${result.medias}] created`)
           results.push(result)
-        } catch (err) {
-          this.logger.error(`Failed to export item "${title}"`,
-                        err.message, err.stack)
+        } catch (e) {
+          this.logger.error({
+            stack: e.stack
+          }, `Failed to export item "${title}"`)
           if (!this.config.ignoreErrors) {
             break
           }

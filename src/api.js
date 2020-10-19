@@ -6,6 +6,7 @@ const { API, URL, TROPY, OMEKA } = require('./constants')
 const { assign, entries } = Object
 const request = require('./http')
 const { nativeImage } = require('electron')
+const { readFile } = require('fs').promises
 
 // url should end in "/api"
 function ensureUrl(url) {
@@ -58,13 +59,7 @@ class OmekaApi {
     this.config.url = ensureUrl(this.config.url)
     this.missingProperties = []
     this.context = context
-    this.logger = this.context.logger || require('./logger')
-
-    if (context && context.require) {
-      this.Promise = this.context.require('bluebird')
-      this.readFile = this.Promise.promisify(
-        this.context.require('fs').readFile)
-    }
+    this.logger = this.context.logger
   }
 
   request(url, params, qs = {}) {
@@ -133,7 +128,7 @@ class OmekaApi {
 
     const buffer = selection ?
       this.selectionImage(path, selection) :
-      this.readFile(path)
+      readFile(path)
 
     const form = new FormData()
     form.append('data', JSON.stringify(data))
@@ -275,7 +270,7 @@ class OmekaApi {
           upload = this.uploadPicture(selection, itemId, path, selection)
           upload && result.push(upload)
         } catch (e) {
-          this.logger.error('Could not upload selection', e)
+          this.logger.error({ stack: e.stack }, 'Could not upload selection')
         }
       }
     }
@@ -303,10 +298,10 @@ class OmekaApi {
 
     // upload Item's Photos and Selections
     const photos = item[TROPY.PHOTO][0]['@list']
-    const medias = await this.Promise.all(
+    const medias = await Promise.all(
       await this.uploadMedia(itemId, photos))
 
-    await this.Promise( this.uploadNotes(itemId, this.getNotes(item)) )
+    await this.uploadNotes(itemId, this.getNotes(item))
 
     medias.map(photoResponse => {
       this.logger.debug({ photoResponse })

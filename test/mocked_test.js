@@ -1,12 +1,13 @@
 'use strict'
 
 const { expect } = require('chai')
+const sinon = require('sinon')
 const fetchMock = require('fetch-mock')
 const { OmekaApi } = require('../src/api')
 const { URL } = require('../src/constants')
 const Plugin = require('..')
 const fixtures = require('./fixtures')
-const logger = require('../src/logger')
+const jsonld = require('jsonld')
 
 const API_URL = 'http://mock.url/api'
 
@@ -24,8 +25,15 @@ fetchMock
 describe.only('Mocked requests', () => {
   // in production, passed to Plugin from Tropy
   const context = {
-    logger,
-    require
+    logger: {
+      debug: sinon.spy(),
+      error: sinon.spy(),
+      info: sinon.spy(),
+      warn: sinon.spy()
+    },
+    json: {
+      expand: jsonld.promises.expand
+    }
   }
 
   it('getProperties', async () => {
@@ -47,9 +55,9 @@ describe.only('Mocked requests', () => {
       { api: { url: API_URL } },
       context
     )
-    const result = (await plugin.export(fixtures.items))[0]
-    expect(result.item).to.eql(1)
-    expect(result.medias).to.have.members([2, 3, 4])
+    let result = await plugin.export(fixtures.items)
+    expect(result[0].item).to.eql(1)
+    expect(result[0].medias).to.have.members([2, 3, 4])
 
     expect(fetchMock.calls(url(URL.VOCABS)).length).to.eql(1)
     expect(fetchMock.calls(url(URL.PROPS)).length).to.eql(1)

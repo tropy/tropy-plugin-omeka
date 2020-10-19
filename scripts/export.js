@@ -9,7 +9,7 @@ const path = require('path')
 const argv = require('yargs').argv
 const Promise = require('bluebird')
 const readFileAsync = Promise.promisify(require('fs').readFile)
-const logger = require('../src/logger')
+const logger = require('./logger')
 
 async function readFile(key) {
   const fileName = argv[key]

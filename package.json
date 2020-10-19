@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "export": "electron scripts/export.js",
-    "lint": "eslint .",
-    "test": "npm run lint && electron-mocha --renderer"
+    "pretest": "eslint .",
+    "test": "electron-mocha --renderer"
   },
   "author": {
     "name": "Center for History and New Media, George Mason University",
@@ -41,13 +41,13 @@
     "bluebird": "^3.5.1",
     "bunyan": "^1.8.12",
     "chai": "^4.1.2",
-    "electron": "^9.1.0",
-    "electron-mocha": "^5.0.0",
-    "eslint": "^4.13.1",
+    "electron": "^10.1.3",
+    "electron-mocha": "^9.3.0",
+    "eslint": "^7.11.0",
     "fetch-mock": "^6.0.0-beta.7",
-    "jsonld": "^1.0.0",
-    "mocha": "^4.0.1",
-    "node-fetch": "^1.7.3",
-    "yargs": "^10.0.3"
+    "jsonld": "^3.2.0",
+    "node-fetch": "^2.6.1",
+    "sinon": "^9.2.0",
+    "yargs": "^16.1.0"
   }
 }
