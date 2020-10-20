@@ -1,42 +1,31 @@
-[{
+{
   "@context": {
     "@version": 1.1,
     "@vocab": "https://tropy.org/v1/tropy#",
     "template": {
-      "@id": "https://tropy.org/v1/tropy#template",
       "@type": "@id"
     },
     "photo": {
       "@id": "https://tropy.org/v1/tropy#photo",
-      "@container": "@list",
-      "@context": {
-        "selection": {
-          "@id": "https://tropy.org/v1/tropy#selection",
-          "@container": "@list",
-          "@context": {
-            "title": {
-              "@id": "http://purl.org/dc/elements/1.1/title",
-              "@type": "http://www.w3.org/2001/XMLSchema#string"
-            }
-          }
-        },
-        "date": {
-          "@id": "http://purl.org/dc/elements/1.1/date",
-          "@type": "https://tropy.org/v1/tropy#date"
-        },
-        "title": {
-          "@id": "http://purl.org/dc/elements/1.1/title",
-          "@type": "http://www.w3.org/2001/XMLSchema#string"
-        }
-      }
+      "@container": "@list"
     },
-    "title": {
-      "@id": "http://purl.org/dc/terms/title",
-      "@type": "http://www.w3.org/2001/XMLSchema#string"
-    }
+    "note": {
+      "@id": "https://tropy.org/v1/tropy#note",
+      "@container": "@list"
+    },
+    "selection": {
+      "@id": "https://tropy.org/v1/tropy#selection",
+      "@container": "@list"
+    },
+    "date": {
+      "@id": "http://purl.org/dc/elements/1.1/date",
+      "@type": "https://tropy.org/v1/tropy#date"
+    },
+    "title": "http://purl.org/dc/elements/1.1/title"
   },
   "@graph": [{
     "@type": "Item",
+    "template": "https://tropy.org/v1/templates/item",
     "title": "Item Title",
     "photo": [{
         "@type": "Photo",
@@ -62,5 +51,5 @@
       }
     ]
   }],
-  "template": "https://tropy.org/v1/templates/item"
-}]
+  "version": "1.8.1"
+}
