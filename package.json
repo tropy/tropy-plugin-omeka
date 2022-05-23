@@ -2,6 +2,7 @@
   "name": "tropy-omeka",
   "version": "2.0.0",
   "description": "Export Tropy items to Omeka S.",
+  "icon": "icon.svg",
   "main": "index.js",
   "scripts": {
     "export": "electron scripts/export.js",

@@ -1,4 +1,6 @@
-# Tropy -> Omeka Plugin
+<p align="center"><img src="icon.svg"></p>
+
+<h1 align="center">Tropy -> Omeka Plugin</h1>
 
 This is a plugin for [Tropy](https://tropy.org). It can export selected items into an [Omeka S](https://omeka.org/s/) instance.
 
