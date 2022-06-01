@@ -6,8 +6,8 @@
   "icon": "icon.svg",
   "main": "index.js",
   "scripts": {
-    "pretest": "eslint .",
-    "test": "electron-mocha --renderer"
+    "lint": "eslint --color .",
+    "test": "electron-mocha --renderer test"
   },
   "author": {
     "name": "Center for History and New Media, George Mason University",
