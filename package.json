@@ -1,7 +1,8 @@
 {
   "name": "tropy-omeka",
+  "productName": "Omeka S",
   "version": "2.0.0",
-  "description": "Export Tropy items to Omeka S.",
+  "description": "Export items to Omeka S.",
   "icon": "icon.svg",
   "main": "index.js",
   "scripts": {
@@ -23,7 +24,7 @@
       "field": "api.url",
       "default": "http://<omeka_url>/api",
       "hint": "The URL to your Omeka S server",
-      "label": "API URL"
+      "label": "Omeka API URL"
     },
     {
       "field": "api.key_identity",
