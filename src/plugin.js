@@ -1,7 +1,7 @@
 'use strict'
 
-const { OmekaApi } = require('./src/api')
-const { TITLES } = require('./src/constants')
+const { OmekaApi } = require('./api')
+const { TITLES } = require('./constants')
 
 const configDefaults = {
   ignoreErrors: true
