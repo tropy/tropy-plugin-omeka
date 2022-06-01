@@ -6,7 +6,6 @@
   "icon": "icon.svg",
   "main": "index.js",
   "scripts": {
-    "export": "electron scripts/export.js",
     "pretest": "eslint .",
     "test": "electron-mocha --renderer"
   },
@@ -40,16 +39,13 @@
     }
   ],
   "devDependencies": {
-    "bluebird": "^3.5.1",
-    "bunyan": "^1.8.12",
-    "chai": "^4.1.2",
-    "electron": "^13.6.6",
-    "electron-mocha": "^9.3.0",
-    "eslint": "^7.11.0",
-    "fetch-mock": "^6.0.0-beta.7",
-    "jsonld": "^3.2.0",
+    "chai": "^4.3.6",
+    "electron": "^18.2.2",
+    "electron-mocha": "^11.0.2",
+    "eslint": "^8.14.0",
+    "fetch-mock": "^6.0.0",
+    "jsonld": "^5.2.0",
     "node-fetch": "^2.6.1",
-    "sinon": "^9.2.0",
-    "yargs": "^16.1.0"
+    "sinon": "^14.0.0"
   }
 }
