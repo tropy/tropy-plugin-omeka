@@ -22,7 +22,7 @@ fetchMock
     'o:id': uploadCount++
   }))
 
-describe.only('Mocked requests', () => {
+describe('Mocked requests', () => {
   // in production, passed to Plugin from Tropy
   const context = {
     logger: {

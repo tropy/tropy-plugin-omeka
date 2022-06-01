@@ -108,7 +108,7 @@ class OmekaApi {
       x: get('x'),
       y: get('y'),
       width: get('width'),
-      height: get('height'),
+      height: get('height')
     }
 
     return nativeImage
@@ -188,20 +188,20 @@ class OmekaApi {
     var notes = []
     item[TROPY.PHOTO][0]['@list'].map(photo => {
       //photos notes
-      if ( photo[TROPY.NOTE] ) {
+      if (photo[TROPY.NOTE]) {
         photo[TROPY.NOTE][0]['@list'].map(note => {
           notes.push({ html: note[TROPY.HTML][0]['@value'] })
         })
       }
 
       //selections notes
-      if ( photo[TROPY.SELECTION] ) {
+      if (photo[TROPY.SELECTION]) {
         photo[TROPY.SELECTION][0]['@list'].map(selection => {
-            if ( selection[TROPY.NOTE] ) {
-              selection[TROPY.NOTE][0]['@list'].map(note => {
-                notes.push({ html: note[TROPY.HTML][0]['@value'] })
-              })
-            }
+          if (selection[TROPY.NOTE]) {
+            selection[TROPY.NOTE][0]['@list'].map(note => {
+              notes.push({ html: note[TROPY.HTML][0]['@value'] })
+            })
+          }
         })
       }
     })
@@ -276,7 +276,7 @@ class OmekaApi {
     }
 
     return result
-   }
+  }
 
   createItem(item) {
     const body = this.buildMetadata(item, this.properties)
