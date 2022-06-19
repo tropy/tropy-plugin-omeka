@@ -7,7 +7,9 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint --color .",
-    "test": "electron-mocha --renderer test"
+    "test": "electron-mocha --renderer test",
+    "build": "rollup -c rollup.config.js",
+    "watch": "rollup -c -w rollup.config.js"
   },
   "author": {
     "name": "Center for History and New Media, George Mason University",
@@ -39,6 +41,9 @@
     }
   ],
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
     "chai": "^4.3.6",
     "electron": "^18.2.2",
     "electron-mocha": "^11.0.2",
@@ -46,6 +51,8 @@
     "fetch-mock": "^6.0.0",
     "jsonld": "^5.2.0",
     "node-fetch": "^2.6.1",
+    "rollup": "^2.72.1",
+    "rollup-plugin-license": "^2.8.0",
     "sinon": "^14.0.0"
   }
 }

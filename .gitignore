@@ -2,3 +2,6 @@ config.json
 *.jsonld
 *.log
 node_modules
+
+third-party-licenses.txt
+index.js

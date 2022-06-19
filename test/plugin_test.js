@@ -1,7 +1,7 @@
 'use strict'
 
 const { expect } = require('chai')
-const Plugin = require('..')
+const Plugin = require('../src/plugin')
 
 describe('Plugin', () => {
   it('config defaults', () => {

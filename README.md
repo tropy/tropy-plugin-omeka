@@ -1,31 +1,29 @@
 <p align="center"><img src="icon.svg"></p>
 
-<h1 align="center">Tropy -> Omeka Plugin</h1>
+<h1 align="center">tropy-plugin-omeka</h1>
 
 This is a plugin for [Tropy](https://tropy.org). It can export selected items into an [Omeka S](https://omeka.org/s/) instance.
 
-## Setup
+## Installation
 
-    git clone https://github.com/tropy/tropy-omeka
-    cd tropy-omeka
-    npm install
+Download the `.zip` file, named `tropy-plugin-omeka` plus a version number, from the [latest release](https://github.com/tropy/tropy-plugin-omeka/releases/latest) on GitHub. In Tropy, navigate to *Preferences… > Plugins* and click *Install Plugin* to select the downloaded ZIP file.
 
-## Configuration
+## Plugin configuration
 
-Copy the default configuration
+To configure the plugin, click its *Settings* button in *Preferences > Plugins*:
 
-    cp config.default.json config.json
+Some settings apply to both import and export:
 
-And populate it with your Omeka API key, found under `User Preferences -> API keys`.
+- Choose a plugin *Name* that will show up in the *File > Export* menu.
+- Fill in the *Identity key* and *Credential key* fields, which can be found in Omeka S under *User Preferences > API keys*.
+- Fill in the *Omeka API URL* for your instance of Omeka S.
+- Optionally, specify the *Resource Template ID* of the Omeka resource template to be applied to the exported items.
+- Use the *+* icon at the far right to create new plugin instances (so you can have multiple configurations in parallel).
 
-## Running
+## Usage
 
-Export your items from Tropy using the context menu, e.g. to `items.jsonld`. Run the exporter:
+Select the items to export, then click *File > Export > tropy-plugin-omeka* to start the export. The plugin will upload the selected items to the specified Omeka instance.
 
-    npm run export -- --config /path/to/config.json --data /path/to/items.jsonld | bunyan
+## Feedback
 
-## Development
-
-Run the tests in electron renderer process:
-
-    npm run test
+Missing a feature or having problems? Please head over to the [Tropy forums](https://forums.tropy.org/) and let us know.

@@ -5,7 +5,7 @@ const sinon = require('sinon')
 const fetchMock = require('fetch-mock')
 const { OmekaApi } = require('../src/api')
 const { URL } = require('../src/constants')
-const Plugin = require('..')
+const Plugin = require('../src/plugin')
 const fixtures = require('./fixtures')
 const jsonld = require('jsonld')
 
